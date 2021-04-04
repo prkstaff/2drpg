@@ -1,25 +1,22 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 )
 
 // Game implements ebiten.Game interface.
 type Game struct {
-	clock string
+	scenes       map[string]Scene
+	currentScene string
 }
 
 // Update proceeds the game state.
 // Update is called every tick (1/60 [s] by default).
 func (g *Game) Update() error {
 	// Write your game's logical update.
-	dt := time.Now()
-	g.clock = fmt.Sprintf("time now: %s", dt.String())
+	g.scenes[g.currentScene].update()
 	return nil
 }
 
@@ -28,7 +25,7 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	// Write your game's rendering.
 
-	ebitenutil.DebugPrint(screen, g.clock)
+	g.scenes[g.currentScene].draw(screen)
 }
 
 // Layout takes the outside size (e.g., the window size) and returns the (logical) screen size.
@@ -39,9 +36,17 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 
 func main() {
 	game := &Game{}
+
+	//start Screen
+	startScreen := GameStartScreen{}
+	game.scenes = map[string]Scene{"start": &startScreen}
+
+	//set scene
+	game.currentScene = "start"
+
 	// Specify the window size as you like. Here, a doubled size is specified.
 	ebiten.SetWindowSize(640, 480)
-	ebiten.SetWindowTitle("Your game's title")
+	ebiten.SetWindowTitle("My 2D RPG")
 	// Call ebiten.RunGame to start your game loop.
 	if err := ebiten.RunGame(game); err != nil {
 		log.Fatal(err)
