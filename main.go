@@ -12,6 +12,11 @@ type Game struct {
 	currentScene string
 }
 
+func (g *Game) loadScene(sceneName string) {
+	g.currentScene = "start"
+	g.scenes[g.currentScene].onLoad()
+}
+
 // Update proceeds the game state.
 // Update is called every tick (1/60 [s] by default).
 func (g *Game) Update() error {
