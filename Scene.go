@@ -1,16 +1,14 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"image/png"
+	_ "image/png"
 	"os"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/lafriks/go-tiled"
-	"github.com/lafriks/go-tiled/render"
 )
 
 const mapPath = "first.tmx"
@@ -34,9 +32,12 @@ func (startScreen *GameStartScreen) update() {
 
 func (startScreen *GameStartScreen) draw(screen *ebiten.Image) {
 	ebitenutil.DebugPrint(screen, startScreen.clock)
+	op := &ebiten.DrawImageOptions{}
+	screen.DrawImage(startScreen.mapBGImage, op)
 }
 
 func (startScreen *GameStartScreen) onLoad() {
+	fmt.Println("Loaded")
 	// Parse .tmx file.
 	gameMap, err := tiled.LoadFromFile(mapPath)
 	if err != nil {
@@ -44,25 +45,11 @@ func (startScreen *GameStartScreen) onLoad() {
 		os.Exit(2)
 	}
 	startScreen.gameMap = gameMap
-	// create a renderer
-	mapRenderer, err := render.NewRenderer(gameMap)
 
-	if err != nil {
-		panic(err)
+	myBG, _, err2 := ebitenutil.NewImageFromFile("tileset.png")
+	if err2 != nil {
+		fmt.Println(err)
+		os.Exit(2)
 	}
-	// render it to an in memory image
-	err = mapRenderer.RenderVisibleLayers()
-
-	if err != nil {
-		panic(err)
-	}
-
-	var buff []byte
-	buffer := bytes.NewBuffer(buff)
-
-	mapRenderer.SaveAsPng(buffer)
-
-	im, err := png.Decode(buffer)
-
-	startScreen.mapBGImage = ebiten.NewImageFromImage(im)
+	startScreen.mapBGImage = myBG
 }

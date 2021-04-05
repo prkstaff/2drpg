@@ -13,7 +13,7 @@ type Game struct {
 }
 
 func (g *Game) loadScene(sceneName string) {
-	g.currentScene = "start"
+	g.currentScene = sceneName
 	g.scenes[g.currentScene].onLoad()
 }
 
@@ -47,7 +47,7 @@ func main() {
 	game.scenes = map[string]Scene{"start": &startScreen}
 
 	//set scene
-	game.currentScene = "start"
+	game.loadScene("start")
 
 	// Specify the window size as you like. Here, a doubled size is specified.
 	ebiten.SetWindowSize(640, 480)
