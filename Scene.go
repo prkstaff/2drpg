@@ -1,13 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"image/png"
 	"os"
 	"time"
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/lafriks/go-tiled"
+	"github.com/lafriks/go-tiled/render"
 )
 
 const mapPath = "first.tmx"
@@ -19,8 +22,9 @@ type Scene interface {
 }
 
 type GameStartScreen struct {
-	clock   string
-	gameMap *tiled.Map
+	clock      string
+	gameMap    *tiled.Map
+	mapBGImage *ebiten.Image
 }
 
 func (startScreen *GameStartScreen) update() {
@@ -40,4 +44,25 @@ func (startScreen *GameStartScreen) onLoad() {
 		os.Exit(2)
 	}
 	startScreen.gameMap = gameMap
+	// create a renderer
+	mapRenderer, err := render.NewRenderer(gameMap)
+
+	if err != nil {
+		panic(err)
+	}
+	// render it to an in memory image
+	err = mapRenderer.RenderVisibleLayers()
+
+	if err != nil {
+		panic(err)
+	}
+
+	var buff []byte
+	buffer := bytes.NewBuffer(buff)
+
+	mapRenderer.SaveAsPng(buffer)
+
+	im, err := png.Decode(buffer)
+
+	startScreen.mapBGImage = ebiten.NewImageFromImage(im)
 }
