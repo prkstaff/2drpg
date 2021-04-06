@@ -14,12 +14,13 @@ import (
 )
 
 // embeddedFS holds our game assets so we can distribute our game as a single binary
-//go:embed first.tmx default-tileset.tsx tileset.png
+//go:embed main.tmx tileset.png tileset.tsx
 var embeddedFS embed.FS
 
 const (
-	screenWidth  = 960
-	screenHeight = 960
+	// nao deve ser menor que tileset
+	screenWidth  = 800
+	screenHeight = 800
 )
 
 type Scene interface {
@@ -95,14 +96,14 @@ func (startScreen *GameStartScreen) onLoad() {
 	}
 	startScreen.mapBGImage = tilesetIMG
 	var loadMapTMXErr error
-	startScreen.gameMap, loadMapTMXErr = ebitmx.GetEbitenMapFromFS(embeddedFS, "first.tmx")
+	startScreen.gameMap, loadMapTMXErr = ebitmx.GetEbitenMapFromFS(embeddedFS, "main.tmx")
 	if loadMapTMXErr != nil {
 		fmt.Println(loadMapTMXErr)
 		os.Exit(2)
 	}
 
 	var tilesetLoadErr error
-	startScreen.tilesetMetadata, tilesetLoadErr = ebitmx.GetTilesetFromFS(embeddedFS, "default-tileset.tsx")
+	startScreen.tilesetMetadata, tilesetLoadErr = ebitmx.GetTilesetFromFS(embeddedFS, "tileset.tsx")
 	if tilesetLoadErr != nil {
 		fmt.Println(tilesetLoadErr)
 		os.Exit(2)
