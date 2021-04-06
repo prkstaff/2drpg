@@ -1,4 +1,6 @@
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
+github.com/Rulox/ebitmx v0.0.0-20210328203036-c183f6244342 h1:7vzDXSNqrEBOH181bKsl1Lguo6eM24V48VL+9MFi2vc=
+github.com/Rulox/ebitmx v0.0.0-20210328203036-c183f6244342/go.mod h1:GMgtlG7UAtFmxgEa/6HWYBk0qZFQF+PMtVYevASp5do=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/disintegration/imaging v1.6.2 h1:w1LecBlG2Lnp8B3jk5zSuNqd7b4DXhcjwek1ei82L+c=
 github.com/disintegration/imaging v1.6.2/go.mod h1:44/5580QXChDfwIclfc/PCwrr44amcmDAg8hxG0Ewe4=
