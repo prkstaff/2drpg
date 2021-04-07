@@ -13,7 +13,7 @@ import (
 )
 
 // embeddedFS holds our game assets so we can distribute our game as a single binary
-//go:embed src/maps/main.tmx src/tilesets/tileset.png src/tilesets/tileset.tsx
+//go:embed assets/maps/main.tmx assets/tilesets/tileset.png assets/tilesets/tileset.tsx
 var embeddedFS embed.FS
 
 const (
@@ -79,7 +79,7 @@ func (startScreen *GameStartScreen) draw(screen *ebiten.Image) {
 func (startScreen *GameStartScreen) onLoad() {
 	var tilesetIMG *ebiten.Image
 	{
-		imgFile, err := embeddedFS.Open("src/tilesets/tileset.png")
+		imgFile, err := embeddedFS.Open("assets/tilesets/tileset.png")
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(2)
@@ -95,14 +95,14 @@ func (startScreen *GameStartScreen) onLoad() {
 	}
 	startScreen.mapBGImage = tilesetIMG
 	var loadMapTMXErr error
-	startScreen.gameMap, loadMapTMXErr = ebitmx.GetEbitenMapFromFS(embeddedFS, "src/maps/main.tmx")
+	startScreen.gameMap, loadMapTMXErr = ebitmx.GetEbitenMapFromFS(embeddedFS, "assets/maps/main.tmx")
 	if loadMapTMXErr != nil {
 		fmt.Println(loadMapTMXErr)
 		os.Exit(2)
 	}
 
 	var tilesetLoadErr error
-	startScreen.tilesetMetadata, tilesetLoadErr = ebitmx.GetTilesetFromFS(embeddedFS, "src/tilesets/tileset.tsx")
+	startScreen.tilesetMetadata, tilesetLoadErr = ebitmx.GetTilesetFromFS(embeddedFS, "assets/tilesets/tileset.tsx")
 	if tilesetLoadErr != nil {
 		fmt.Println(tilesetLoadErr)
 		os.Exit(2)
