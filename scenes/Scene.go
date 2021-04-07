@@ -24,7 +24,7 @@ type Scene interface {
 	Draw(screen *ebiten.Image)
 }
 
-type GameStartScreen struct {
+type VillageScene struct {
 	clock           string
 	gameMap         *ebitmx.EbitenMap
 	mapBGImage      *ebiten.Image
@@ -32,7 +32,7 @@ type GameStartScreen struct {
 	EmbeddedFS      *embed.FS
 }
 
-func (startScreen *GameStartScreen) getTileImgByID(id int) *ebiten.Image {
+func (startScreen *VillageScene) getTileImgByID(id int) *ebiten.Image {
 	// The tsx format starts counting tiles from 1, so to make these calculations
 	// work correctly, we need to decrement the ID by 1
 	id -= 1
@@ -44,12 +44,12 @@ func (startScreen *GameStartScreen) getTileImgByID(id int) *ebiten.Image {
 	return startScreen.mapBGImage.SubImage(image.Rect(x0, y0, x1, y1)).(*ebiten.Image)
 }
 
-func (startScreen *GameStartScreen) Update() {
+func (startScreen *VillageScene) Update() {
 	dt := time.Now()
 	startScreen.clock = fmt.Sprintf("time now: %s", dt.String())
 }
 
-func (startScreen *GameStartScreen) Draw(screen *ebiten.Image) {
+func (startScreen *VillageScene) Draw(screen *ebiten.Image) {
 	// Draw map using the same method as the official tiles example
 	// https://ebiten.org/examples/tiles.html
 
@@ -73,7 +73,7 @@ func (startScreen *GameStartScreen) Draw(screen *ebiten.Image) {
 	//ebitenutil.DebugPrint(screen, startScreen.clock)
 }
 
-func (startScreen *GameStartScreen) OnLoad() {
+func (startScreen *VillageScene) OnLoad() {
 	var tilesetIMG *ebiten.Image
 	{
 		imgFile, err := startScreen.EmbeddedFS.Open("assets/tilesets/tileset.png")

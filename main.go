@@ -54,12 +54,12 @@ func main() {
 	game := &Game{}
 
 	//start Screen
-	startScreen := scenes.GameStartScreen{}
-	startScreen.EmbeddedFS = &embeddedFS
-	game.scenes = map[string]scenes.Scene{"start": &startScreen}
+	villageScene := scenes.VillageScene{}
+	villageScene.EmbeddedFS = &embeddedFS
+	game.scenes = map[string]scenes.Scene{"village": &villageScene}
 
 	//set scene
-	game.loadScene("start")
+	game.loadScene("village")
 
 	// Specify the window size as you like. Here, a doubled size is specified.
 	ebiten.SetWindowSize(1024, 1000)
