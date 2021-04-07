@@ -1,27 +1,33 @@
 package main
 
 import (
+	"embed"
 	"log"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/prkstaff/2drpg/scenes"
 )
+
+// embeddedFS holds our game assets so we can distribute our game as a single binary
+//go:embed assets/maps/main.tmx assets/tilesets/tileset.png assets/tilesets/tileset.tsx
+var embeddedFS embed.FS
 
 // Game implements ebiten.Game interface.
 type Game struct {
-	scenes       map[string]Scene
+	scenes       map[string]scenes.Scene
 	currentScene string
 }
 
 func (g *Game) loadScene(sceneName string) {
 	g.currentScene = sceneName
-	g.scenes[g.currentScene].onLoad()
+	g.scenes[g.currentScene].OnLoad()
 }
 
 // Update proceeds the game state.
 // Update is called every tick (1/60 [s] by default).
 func (g *Game) Update() error {
 	// Write your game's logical update.
-	g.scenes[g.currentScene].update()
+	g.scenes[g.currentScene].Update()
 	return nil
 }
 
@@ -30,7 +36,7 @@ func (g *Game) Update() error {
 func (g *Game) Draw(screen *ebiten.Image) {
 	// Write your game's rendering.
 
-	g.scenes[g.currentScene].draw(screen)
+	g.scenes[g.currentScene].Draw(screen)
 }
 
 const (
@@ -48,8 +54,9 @@ func main() {
 	game := &Game{}
 
 	//start Screen
-	startScreen := GameStartScreen{}
-	game.scenes = map[string]Scene{"start": &startScreen}
+	startScreen := scenes.GameStartScreen{}
+	startScreen.EmbeddedFS = &embeddedFS
+	game.scenes = map[string]scenes.Scene{"start": &startScreen}
 
 	//set scene
 	game.loadScene("start")
