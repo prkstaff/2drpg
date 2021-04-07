@@ -6,6 +6,7 @@ import (
 
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/prkstaff/2drpg/scenes"
+	"github.com/prkstaff/2drpg/settings"
 )
 
 // embeddedFS holds our game assets so we can distribute our game as a single binary
@@ -39,15 +40,10 @@ func (g *Game) Draw(screen *ebiten.Image) {
 	g.scenes[g.currentScene].Draw(screen)
 }
 
-const (
-	width  = 400
-	height = 400
-)
-
 // Layout takes the outside size (e.g., the window size) and returns the (logical) screen size.
 // If you don't have to adjust the screen size with the outside size, just return a fixed size.
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return width, height
+	return settings.GameSettings().LayoutWidth, settings.GameSettings().LayoutHeight
 }
 
 func main() {
@@ -62,7 +58,7 @@ func main() {
 	game.loadScene("village")
 
 	// Specify the window size as you like. Here, a doubled size is specified.
-	ebiten.SetWindowSize(1024, 1000)
+	ebiten.SetWindowSize(settings.GameSettings().WindowWidth, settings.GameSettings().WindowHeigh)
 	ebiten.SetWindowTitle("My 2D RPG")
 	// Call ebiten.RunGame to start your game loop.
 	if err := ebiten.RunGame(game); err != nil {
