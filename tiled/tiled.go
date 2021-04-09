@@ -15,6 +15,7 @@ type Data struct {
 	RawData []byte `xml:",innerxml"`
 	// RawData string `xml:",innerxml"`
 }
+
 type Layer struct {
 	Width float64 `xml:"width,attr"`
 	Height float64 `xml:"height,attr"`
@@ -53,6 +54,10 @@ type ObjectGroup struct {
 	Objects []*Object `xml:"object"`
 }
 
+type Tileset struct {
+	Source string `xml:"source,attr"`
+}
+
 type Map struct{
 	Width uint16 `xml:"width,attr"` // Number of tiles Width
 	Height uint16 `xml:"height,attr"` // Number of tiles Height
@@ -61,14 +66,14 @@ type Map struct{
 	Infinite     bool     `xml:"infinite,attr"`
 	RenderOrder  string   `xml:"renderorder,attr"`
 	Layers []*Layer `xml:"layer"`
-	Source string `xml:"source,attr"` // The tsx file
 	Version      string   `xml:"version,attr"`
 	TiledVersion string   `xml:"tiledversion,attr"`
-	Objects ObjectGroup `xml:"objectgroup"`
+	Objects *ObjectGroup `xml:"objectgroup"`
 	Orientation  string   `xml:"orientation,attr"`
+	Tileset Tileset `xml:"tileset"`
 }
 
-func ReadTMX(tmxPath string){
+func ReadTMX(tmxPath string) *Map{
 	data, err := ioutil.ReadFile(tmxPath)
 	if err != nil {
 		panic(err)
@@ -76,5 +81,5 @@ func ReadTMX(tmxPath string){
 	fmt.Println(string(data))
 	var tiledMap Map
 	xml.Unmarshal(data, &tiledMap)
-	fmt.Println(tiledMap)
+	return &tiledMap
 }
