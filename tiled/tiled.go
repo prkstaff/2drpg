@@ -6,15 +6,21 @@ import (
 	"io/ioutil"
 )
 
-type Tile struct {
-	ID uint16
+type Data struct {
+	// The encoding used to encode the tile layer data. When used, it can be "base64" and "csv" at the moment.
+	Encoding string `xml:"encoding,attr"`
+	// The compression used to compress the tile layer data. Tiled Qt supports "gzip" and "zlib".
+	Compression string `xml:"compression,attr"`
+	// Raw data
+	RawData []byte `xml:",innerxml"`
+	// RawData string `xml:",innerxml"`
 }
 type Layer struct {
 	Width float64 `xml:"width,attr"`
 	Height float64 `xml:"height,attr"`
-	Tiles []*Tile
 	ID uint32 `xml:"id,attr"`
 	Name string `xml:"name,attr"`
+	Data Data`xml:"data"`
 }
 
 type Object struct {

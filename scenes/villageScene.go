@@ -81,7 +81,6 @@ func (startScreen *VillageScene) OnLoad() {
 	}
 	startScreen.mapBGImage = tilesetIMG
 	var loadMapTMXErr error
-
 	startScreen.gameMap, loadMapTMXErr = ebitmx.GetEbitenMapFromFS(startScreen.EmbeddedFS, "assets/maps/main.tmx")
 	if loadMapTMXErr != nil {
 		fmt.Println(loadMapTMXErr)
