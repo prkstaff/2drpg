@@ -2,7 +2,6 @@ package tiled
 
 import (
 	"encoding/xml"
-	"fmt"
 	"io/ioutil"
 )
 
@@ -78,7 +77,6 @@ func ReadTMX(tmxPath string) *Map{
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(string(data))
 	var tiledMap Map
 	xml.Unmarshal(data, &tiledMap)
 	return &tiledMap
