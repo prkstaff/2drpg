@@ -22,6 +22,6 @@ func TestReadTMX(t *testing.T) {
 	if tiledMap.Tileset.Source != "../tilesets/tileset.tsx"{
 		t.Error("Unexpected source for tileset")
 	}
-	fmt.Print(tiledMap.Layers[0].Data.RawData)
-
+	tiles, _ := tiledMap.Layers[0].Data.decodeCSVTileData()
+	fmt.Print(tiles)
 }

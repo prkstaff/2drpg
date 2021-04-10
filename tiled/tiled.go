@@ -3,6 +3,8 @@ package tiled
 import (
 	"encoding/xml"
 	"io/ioutil"
+	"strconv"
+	"strings"
 )
 
 type Data struct {
@@ -13,6 +15,27 @@ type Data struct {
 	// Raw data
 	RawData []byte `xml:",innerxml"`
 	// RawData string `xml:",innerxml"`
+}
+
+func (d *Data) decodeCSVTileData() ([]uint16, error) {
+	// remove return character
+	cleanedTileString := strings.ReplaceAll(string(d.RawData), "\r", "")
+	// remove newline character
+	cleanedTileString = strings.ReplaceAll(cleanedTileString, "\n", "")
+	// split comma character of csv
+	tiles := strings.Split(cleanedTileString, ",")
+	// convert list of strings to uint16 and return
+	tileSlice := make([]uint16, len(tiles))
+	for i, value := range(tiles){
+		var id uint64
+		var err error
+		id, err = strconv.ParseUint(value, 10, 16)
+		if err != nil {
+			return nil, err
+		}
+		tileSlice[i] = uint16(id)
+	}
+	return tileSlice, nil
 }
 
 type Layer struct {
