@@ -3,6 +3,7 @@ package scenes
 import (
 	"embed"
 	"fmt"
+	"github.com/prkstaff/2drpg/tiled"
 	"image"
 	"os"
 	"time"
@@ -14,7 +15,7 @@ import (
 
 type VillageScene struct {
 	clock           string
-	gameMap         *ebitmx.EbitenMap
+	gameMap         *tiled.Map
 	mapBGImage      *ebiten.Image
 	tilesetMetadata *ebitmx.EbitenTileset
 	EmbeddedFS      *embed.FS
@@ -43,18 +44,23 @@ func (startScreen *VillageScene) Draw(screen *ebiten.Image) {
 
 	// The scaling we use is consistent across all tiles, so we'll
 	// calculate it outside of the tile-drawing loop
-	sx := float64(settings.GameSettings().ScreenWidth / (startScreen.gameMap.MapWidth * startScreen.gameMap.TileWidth))
-	sy := float64(settings.GameSettings().ScreenHeight / (startScreen.gameMap.MapHeight * startScreen.gameMap.TileHeight))
+	sx := float64(settings.GameSettings().ScreenWidth / (startScreen.gameMap.Width * startScreen.gameMap.TileWidth))
+	sy := float64(settings.GameSettings().ScreenHeight / (startScreen.gameMap.Height * startScreen.gameMap.TileHeight))
 	for _, l := range startScreen.gameMap.Layers {
-		for i, id := range l {
+		layerTilesIDSlice, err := l.Data.DecodeCSVTileData()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
+		for i, id := range layerTilesIDSlice {
 			op := &ebiten.DrawImageOptions{}
 			op.GeoM.Translate(
-				float64((i%startScreen.gameMap.MapWidth)*startScreen.gameMap.TileWidth),
-				float64((i/startScreen.gameMap.MapHeight)*startScreen.gameMap.TileHeight),
+				float64((uint16(i)%startScreen.gameMap.Width)*startScreen.gameMap.TileWidth),
+				float64((uint16(i)/startScreen.gameMap.Height)*startScreen.gameMap.TileHeight),
 			)
 			op.GeoM.Scale(sx, sy)
 
-			screen.DrawImage(startScreen.getTileImgByID(id), op)
+			screen.DrawImage(startScreen.getTileImgByID(int(id)), op)
 		}
 	}
 	//https://github.com/lafriks/go-tiled
@@ -81,7 +87,7 @@ func (startScreen *VillageScene) OnLoad() {
 	}
 	startScreen.mapBGImage = tilesetIMG
 	var loadMapTMXErr error
-	startScreen.gameMap, loadMapTMXErr = ebitmx.GetEbitenMapFromFS(startScreen.EmbeddedFS, "assets/maps/main.tmx")
+	startScreen.gameMap, loadMapTMXErr = tiled.ReadTMX("assets/maps/main.tmx")
 	if loadMapTMXErr != nil {
 		fmt.Println(loadMapTMXErr)
 		os.Exit(2)

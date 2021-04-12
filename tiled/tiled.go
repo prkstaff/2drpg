@@ -17,7 +17,7 @@ type Data struct {
 	// RawData string `xml:",innerxml"`
 }
 
-func (d *Data) decodeCSVTileData() ([]uint16, error) {
+func (d *Data) DecodeCSVTileData() ([]uint16, error) {
 	// remove return character
 	cleanedTileString := strings.ReplaceAll(string(d.RawData), "\r", "")
 	// remove newline character
@@ -95,12 +95,12 @@ type Map struct{
 	Tileset Tileset `xml:"tileset"`
 }
 
-func ReadTMX(tmxPath string) *Map{
+func ReadTMX(tmxPath string) (*Map, error){
 	data, err := ioutil.ReadFile(tmxPath)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	var tiledMap Map
 	xml.Unmarshal(data, &tiledMap)
-	return &tiledMap
+	return &tiledMap, nil
 }

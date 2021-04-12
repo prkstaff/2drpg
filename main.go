@@ -43,7 +43,7 @@ func (g *Game) Draw(screen *ebiten.Image) {
 // Layout takes the outside size (e.g., the window size) and returns the (logical) screen size.
 // If you don't have to adjust the screen size with the outside size, just return a fixed size.
 func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return settings.GameSettings().LayoutWidth, settings.GameSettings().LayoutHeight
+	return int(settings.GameSettings().LayoutWidth), int(settings.GameSettings().LayoutHeight)
 }
 
 func main() {
@@ -58,7 +58,7 @@ func main() {
 	game.loadScene("village")
 
 	// Specify the window size as you like. Here, a doubled size is specified.
-	ebiten.SetWindowSize(settings.GameSettings().WindowWidth, settings.GameSettings().WindowHeigh)
+	ebiten.SetWindowSize(int(settings.GameSettings().WindowWidth), int(settings.GameSettings().WindowHeigh))
 	ebiten.SetWindowTitle("My 2D RPG")
 	// Call ebiten.RunGame to start your game loop.
 	if err := ebiten.RunGame(game); err != nil {

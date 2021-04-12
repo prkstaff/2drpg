@@ -4,12 +4,12 @@ import "sync"
 
 // type global
 type gameSettings struct {
-	ScreenWidth  int // O tamanho do tileset total
-	ScreenHeight int
-	LayoutWidth  int // O tamanho do Layout que vai renderizar
-	LayoutHeight int
-	WindowWidth  int
-	WindowHeigh  int
+	ScreenWidth  uint16 // O tamanho do tileset total
+	ScreenHeight uint16
+	LayoutWidth  uint16 // O tamanho do Layout que vai renderizar
+	LayoutHeight uint16
+	WindowWidth  uint16
+	WindowHeigh  uint16
 }
 
 var instance *gameSettings = nil

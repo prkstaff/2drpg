@@ -1,12 +1,11 @@
 package tiled
 
 import (
-	"fmt"
 	"testing"
 )
 
 func TestReadTMX(t *testing.T) {
-	tiledMap := ReadTMX("mainTest.tmx")
+	tiledMap, _ := ReadTMX("mainTest.tmx")
 	if tiledMap.Width != 50 || tiledMap.Height != 50 {
 		t.Error("unexpected value for map width or length")
 	}
@@ -22,6 +21,6 @@ func TestReadTMX(t *testing.T) {
 	if tiledMap.Tileset.Source != "../tilesets/tileset.tsx"{
 		t.Error("Unexpected source for tileset")
 	}
-	tiles, _ := tiledMap.Layers[0].Data.decodeCSVTileData()
-	fmt.Print(tiles)
+	tiles, _ := tiledMap.Layers[0].Data.DecodeCSVTileData()
+	// https://gamedevelopment.tutsplus.com/tutorials/parsing-and-rendering-tiled-tmx-format-maps-in-your-own-game-engine--gamedev-3104
 }
