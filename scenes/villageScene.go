@@ -8,7 +8,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/Rulox/ebitmx"
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/prkstaff/2drpg/settings"
 )
@@ -17,7 +16,6 @@ type VillageScene struct {
 	clock           string
 	gameMap         *tiled.Map
 	mapBGImage      *ebiten.Image
-	tilesetMetadata *ebitmx.EbitenTileset
 	EmbeddedFS      *embed.FS
 }
 
@@ -26,9 +24,9 @@ func (startScreen *VillageScene) getTileImgByID(id int) *ebiten.Image {
 	// work correctly, we need to decrement the ID by 1
 	id -= 1
 
-	x0 := (id % startScreen.tilesetMetadata.TilesetWidth) * startScreen.tilesetMetadata.TileWidth
-	y0 := (id / startScreen.tilesetMetadata.TilesetWidth) * startScreen.tilesetMetadata.TileHeight
-	x1, y1 := x0+startScreen.tilesetMetadata.TileWidth, y0+startScreen.tilesetMetadata.TileHeight
+	x0 := (id % startScreen.gameMap.Tileset.Columns) * startScreen.gameMap.Tileset.TileWidth
+	y0 := (id / startScreen.gameMap.Tileset.Columns) * startScreen.gameMap.Tileset.TileHeight
+	x1, y1 := x0+startScreen.gameMap.Tileset.TileWidth, y0+startScreen.gameMap.Tileset.TileHeight
 
 	return startScreen.mapBGImage.SubImage(image.Rect(x0, y0, x1, y1)).(*ebiten.Image)
 }
@@ -95,13 +93,6 @@ func (startScreen *VillageScene) OnLoad() {
 	}
 	if loadMapTMXErr != nil {
 		fmt.Println(loadMapTMXErr)
-		os.Exit(2)
-	}
-
-	var tilesetLoadErr error
-	startScreen.tilesetMetadata, tilesetLoadErr = ebitmx.GetTilesetFromFS(startScreen.EmbeddedFS, "assets/tilesets/tileset.tsx")
-	if tilesetLoadErr != nil {
-		fmt.Println(tilesetLoadErr)
 		os.Exit(2)
 	}
 }
