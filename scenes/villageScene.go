@@ -4,7 +4,6 @@ import (
 	"embed"
 	"fmt"
 	"github.com/prkstaff/2drpg/tiled"
-	"image"
 	"os"
 	"time"
 
@@ -15,21 +14,10 @@ import (
 type VillageScene struct {
 	clock           string
 	gameMap         *tiled.Map
-	mapBGImage      *ebiten.Image
 	EmbeddedFS      *embed.FS
 }
 
-func (startScreen *VillageScene) getTileImgByID(id int) *ebiten.Image {
-	// The tsx format starts counting tiles from 1, so to make these calculations
-	// work correctly, we need to decrement the ID by 1
-	id -= 1
 
-	x0 := (id % startScreen.gameMap.Tileset.Columns) * startScreen.gameMap.Tileset.TileWidth
-	y0 := (id / startScreen.gameMap.Tileset.Columns) * startScreen.gameMap.Tileset.TileHeight
-	x1, y1 := x0+startScreen.gameMap.Tileset.TileWidth, y0+startScreen.gameMap.Tileset.TileHeight
-
-	return startScreen.mapBGImage.SubImage(image.Rect(x0, y0, x1, y1)).(*ebiten.Image)
-}
 
 func (startScreen *VillageScene) Update() {
 	dt := time.Now()
@@ -58,7 +46,7 @@ func (startScreen *VillageScene) Draw(screen *ebiten.Image) {
 			)
 			op.GeoM.Scale(sx, sy)
 
-			screen.DrawImage(startScreen.getTileImgByID(int(id)), op)
+			screen.DrawImage(startScreen.gameMap.Tileset.GetTileImgByID(int(id)), op)
 		}
 	}
 	//https://github.com/lafriks/go-tiled
@@ -67,23 +55,7 @@ func (startScreen *VillageScene) Draw(screen *ebiten.Image) {
 }
 
 func (startScreen *VillageScene) OnLoad() {
-	var tilesetIMG *ebiten.Image
-	{
-		imgFile, err := startScreen.EmbeddedFS.Open("assets/tilesets/tileset.png")
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(2)
-		}
 
-		img, _, err := image.Decode(imgFile)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(2)
-		}
-
-		tilesetIMG = ebiten.NewImageFromImage(img)
-	}
-	startScreen.mapBGImage = tilesetIMG
 	var loadMapTMXErr error
 	startScreen.gameMap, loadMapTMXErr = tiled.ReadTMX("assets/maps/main.tmx")
 	_, err2 := startScreen.gameMap.Tileset.LoadDataFromTSXFile()
@@ -91,6 +63,7 @@ func (startScreen *VillageScene) OnLoad() {
 		fmt.Println(err2)
 		os.Exit(2)
 	}
+	startScreen.gameMap.Tileset.LoadTileSetImage()
 	if loadMapTMXErr != nil {
 		fmt.Println(loadMapTMXErr)
 		os.Exit(2)
