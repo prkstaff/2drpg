@@ -88,6 +88,11 @@ func (startScreen *VillageScene) OnLoad() {
 	startScreen.mapBGImage = tilesetIMG
 	var loadMapTMXErr error
 	startScreen.gameMap, loadMapTMXErr = tiled.ReadTMX("assets/maps/main.tmx")
+	_, err2 := startScreen.gameMap.Tileset.LoadDataFromTSXFile()
+	if err2 != nil {
+		fmt.Println(err2)
+		os.Exit(2)
+	}
 	if loadMapTMXErr != nil {
 		fmt.Println(loadMapTMXErr)
 		os.Exit(2)
