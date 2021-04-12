@@ -2,6 +2,7 @@ package tiled
 
 import (
 	"encoding/xml"
+	"fmt"
 	"io/ioutil"
 	"strconv"
 	"strings"
@@ -74,6 +75,16 @@ type ObjectGroup struct {
 	Name string `xml:"name,attr"`
 	// Group objects
 	Objects []*Object `xml:"object"`
+}
+
+func (o *ObjectGroup) GetObjectByName(name string) (*Object, error){
+	for _, obj := range o.Objects{
+		if obj.Name == name{
+			return obj, nil
+		}
+	}
+	notFoundError := fmt.Errorf("not found object: %s", name)
+	return nil, notFoundError
 }
 
 

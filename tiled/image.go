@@ -75,7 +75,6 @@ func (t *Tileset) LoadTileSetImage(){
 		// change back to root
 		os.Chdir("../../")
 		if err != nil {
-			fmt.Println("bliue")
 			fmt.Println(err)
 			os.Exit(2)
 		}
