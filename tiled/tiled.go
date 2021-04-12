@@ -26,7 +26,7 @@ func (d *Data) DecodeCSVTileData() ([]uint16, error) {
 	tiles := strings.Split(cleanedTileString, ",")
 	// convert list of strings to uint16 and return
 	tileSlice := make([]uint16, len(tiles))
-	for i, value := range(tiles){
+	for i, value := range tiles {
 		var id uint64
 		var err error
 		id, err = strconv.ParseUint(value, 10, 16)
@@ -39,11 +39,11 @@ func (d *Data) DecodeCSVTileData() ([]uint16, error) {
 }
 
 type Layer struct {
-	Width float64 `xml:"width,attr"`
+	Width  float64 `xml:"width,attr"`
 	Height float64 `xml:"height,attr"`
-	ID uint32 `xml:"id,attr"`
-	Name string `xml:"name,attr"`
-	Data Data`xml:"data"`
+	ID     uint32  `xml:"id,attr"`
+	Name   string  `xml:"name,attr"`
+	Data   Data    `xml:"data"`
 }
 
 type Object struct {
@@ -76,26 +76,24 @@ type ObjectGroup struct {
 	Objects []*Object `xml:"object"`
 }
 
-type Tileset struct {
-	Source string `xml:"source,attr"`
+
+
+type Map struct {
+	Width        uint16       `xml:"width,attr"`      // Number of tiles Width
+	Height       uint16       `xml:"height,attr"`     // Number of tiles Height
+	TileWidth    uint16       `xml:"tilewidth,attr"`  // Tile Width size in pixels
+	TileHeight   uint16       `xml:"tileheight,attr"` // Tile Height size in pixels
+	Infinite     bool         `xml:"infinite,attr"`
+	RenderOrder  string       `xml:"renderorder,attr"`
+	Layers       []*Layer     `xml:"layer"`
+	Version      string       `xml:"version,attr"`
+	TiledVersion string       `xml:"tiledversion,attr"`
+	Objects      *ObjectGroup `xml:"objectgroup"`
+	Orientation  string       `xml:"orientation,attr"`
+	Tileset      Tileset      `xml:"tileset"`
 }
 
-type Map struct{
-	Width uint16 `xml:"width,attr"` // Number of tiles Width
-	Height uint16 `xml:"height,attr"` // Number of tiles Height
-	TileWidth uint16 `xml:"tilewidth,attr"` // Tile Width size in pixels
-	TileHeight uint16 `xml:"tileheight,attr"` // Tile Height size in pixels
-	Infinite     bool     `xml:"infinite,attr"`
-	RenderOrder  string   `xml:"renderorder,attr"`
-	Layers []*Layer `xml:"layer"`
-	Version      string   `xml:"version,attr"`
-	TiledVersion string   `xml:"tiledversion,attr"`
-	Objects *ObjectGroup `xml:"objectgroup"`
-	Orientation  string   `xml:"orientation,attr"`
-	Tileset Tileset `xml:"tileset"`
-}
-
-func ReadTMX(tmxPath string) (*Map, error){
+func ReadTMX(tmxPath string) (*Map, error) {
 	data, err := ioutil.ReadFile(tmxPath)
 	if err != nil {
 		return nil, err
