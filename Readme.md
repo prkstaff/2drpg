@@ -9,12 +9,6 @@ https://github.com/Rulox/ebitmx/blob/main/examples/main.go
 ## Game example
 https://github.com/gamealgorithms/defense
 
-## Scenes
-https://thatgamesguy.co.uk/cpp-game-dev-6/
-
-## Tiles Draw
-https://ebiten.org/examples/tiles.html
-
 ## Tips
 https://www.gamasutra.com/blogs/TommyRefenes/20130107/184432/How_do_I_get_started_programming_games.php
 
@@ -25,6 +19,10 @@ but they are not a means of making the game for you. You will not become a good 
 programmer by copying and pasting source code into your game unless you fully understand it. Do not cheat yourself this way, 
 take the extra time and understand something before you use it.
 
+## Roadmap:
+1 Basic Maths - Finish Linear Algebra dor games ( Chap3 ) First
+2 Hero move - Chapter 7 - Physics-Based Movement
+3 Hero Collision With Objects - Chapter 7 - Physics- Collision Detection
 
 ## SDL
 https://github.com/nallerooth/go-sdl-tutorial
