@@ -27,3 +27,9 @@ take the extra time and understand something before you use it.
 ## SDL
 https://github.com/nallerooth/go-sdl-tutorial
 
+# Visual
+## Tileset
+from: www.deviantart.com/magiscarf
+
+## Hero Sprite
+from: https://www.deviantart.com/carmenmcs/
