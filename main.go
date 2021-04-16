@@ -2,11 +2,10 @@ package main
 
 import (
 	"embed"
-	"log"
-
 	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/prkstaff/2drpg/scenes"
 	"github.com/prkstaff/2drpg/settings"
+	"github.com/veandco/go-sdl2/sdl"
 )
 
 // embeddedFS holds our game assets so we can distribute our game as a single binary
@@ -47,21 +46,48 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 }
 
 func main() {
-	game := &Game{}
+	//game := &Game{}
 
-	//start Screen
-	villageScene := scenes.VillageScene{}
-	villageScene.EmbeddedFS = &embeddedFS
-	game.scenes = map[string]scenes.Scene{"village": &villageScene}
+	////start Screen
+	//villageScene := scenes.VillageScene{}
+	//villageScene.EmbeddedFS = &embeddedFS
+	//game.scenes = map[string]scenes.Scene{"village": &villageScene}
 
-	//set scene
-	game.loadScene("village")
+	////set scene
+	//game.loadScene("village")
 
 	// Specify the window size as you like. Here, a doubled size is specified.
-	ebiten.SetWindowSize(int(settings.GameSettings().WindowWidth), int(settings.GameSettings().WindowHeigh))
-	ebiten.SetWindowTitle("My 2D RPG")
-	// Call ebiten.RunGame to start your game loop.
-	if err := ebiten.RunGame(game); err != nil {
-		log.Fatal(err)
+	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
+		panic(err)
+	}
+	defer sdl.Quit()
+
+	window, err := sdl.CreateWindow("test", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
+		800, 600, sdl.WINDOW_SHOWN)
+	if err != nil {
+		panic(err)
+	}
+	defer window.Destroy()
+
+	surface, err := window.GetSurface()
+	if err != nil {
+		panic(err)
+	}
+	surface.FillRect(nil, 0)
+
+	rect := sdl.Rect{0, 0, 200, 200}
+	surface.FillRect(&rect, 0xffff0000)
+	window.UpdateSurface()
+
+	running := true
+	for running {
+		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+			switch event.(type) {
+			case *sdl.QuitEvent:
+				println("Quit")
+				running = false
+				break
+			}
+		}
 	}
 }
