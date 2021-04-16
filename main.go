@@ -16,6 +16,8 @@ var embeddedFS embed.FS
 type Game struct {
 	scenes       map[string]scenes.Scene
 	currentScene string
+	Window *sdl.Window
+	Surface *sdl.Surface
 }
 
 func (g *Game) loadScene(sceneName string) {
@@ -45,8 +47,9 @@ func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 	return int(settings.GameSettings().LayoutWidth), int(settings.GameSettings().LayoutHeight)
 }
 
+
 func main() {
-	//game := &Game{}
+	game := &Game{}
 
 	////start Screen
 	//villageScene := scenes.VillageScene{}
@@ -62,22 +65,23 @@ func main() {
 	}
 	defer sdl.Quit()
 
-	window, err := sdl.CreateWindow("test", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
+	var err error
+	game.Window, err = sdl.CreateWindow("test", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 		int32(settings.GameSettings().WindowWidth), int32(settings.GameSettings().WindowHeigh), sdl.WINDOW_SHOWN)
 	if err != nil {
 		panic(err)
 	}
-	defer window.Destroy()
+	defer game.Window.Destroy()
 
-	surface, err := window.GetSurface()
+	game.Surface, err = game.Window.GetSurface()
 	if err != nil {
 		panic(err)
 	}
-	surface.FillRect(nil, 0)
+	game.Surface.FillRect(nil, 0)
 
 	rect := sdl.Rect{0, 0, 200, 200}
-	surface.FillRect(&rect, 0xffff0000)
-	window.UpdateSurface()
+	game.Surface.FillRect(&rect, 0xffff0000)
+	game.Window.UpdateSurface()
 
 	running := true
 	for running {
