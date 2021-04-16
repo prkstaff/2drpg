@@ -72,44 +72,12 @@ func (g *Game) Update() {
 // Draw draws the game screen.
 // Draw is called every frame (typically 1/60[s] for 60Hz display).
 func (g *Game) Draw() {
-	var points []sdl.Point
-	var rect sdl.Rect
-	var rects []sdl.Rect
-	renderer := g.renderer
-	renderer.SetDrawColor(0, 0, 0, 255)
-	renderer.Clear()
+	// fazer um blog post
+	// https://stackoverflow.com/questions/21007329/what-is-an-sdl-renderer
 
-	renderer.SetDrawColor(255, 255, 255, 255)
-	renderer.DrawPoint(150, 300)
-
-	renderer.SetDrawColor(0, 0, 255, 255)
-	renderer.DrawLine(0, 0, 200, 200)
-
-	points = []sdl.Point{{0, 0}, {100, 300}, {100, 300}, {200, 0}}
-	renderer.SetDrawColor(255, 255, 0, 255)
-	renderer.DrawLines(points)
-
-	rect = sdl.Rect{300, 0, 200, 200}
-	renderer.SetDrawColor(255, 0, 0, 255)
-	renderer.DrawRect(&rect)
-
-	rects = []sdl.Rect{{400, 400, 100, 100}, {550, 350, 200, 200}}
-	renderer.SetDrawColor(0, 255, 255, 255)
-	renderer.DrawRects(rects)
-
-	rect = sdl.Rect{250, 250, 200, 200}
-	renderer.SetDrawColor(0, 255, 0, 255)
-	renderer.FillRect(&rect)
-
-	rects = []sdl.Rect{{500, 300, 100, 100}, {200, 300, 200, 200}}
-	renderer.SetDrawColor(255, 0, 255, 255)
-	renderer.FillRects(rects)
-
-	renderer.Present()
+	g.scenes[g.currentScene].Draw(g.renderer)
+	g.renderer.Present()
 	sdl.Delay(16)
-	// Write your game's rendering.
-
-	//g.scenes[g.currentScene].Draw(screen)
 }
 
 func main() {

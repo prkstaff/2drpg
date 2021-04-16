@@ -1,13 +1,12 @@
 package scenes
 
 import (
+	"github.com/veandco/go-sdl2/sdl"
 	_ "image/png"
-
-	"github.com/hajimehoshi/ebiten/v2"
 )
 
 type Scene interface {
 	OnLoad()
 	Update()
-	Draw(screen *ebiten.Image)
+	Draw(renderer *sdl.Renderer)
 }
