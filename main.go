@@ -2,7 +2,6 @@ package main
 
 import (
 	"embed"
-	"github.com/hajimehoshi/ebiten/v2"
 	"github.com/prkstaff/2drpg/scenes"
 	"github.com/prkstaff/2drpg/settings"
 	"github.com/veandco/go-sdl2/sdl"
@@ -18,6 +17,45 @@ type Game struct {
 	currentScene string
 	Window *sdl.Window
 	Surface *sdl.Surface
+	windowName string
+}
+
+func (g Game) run()  {
+	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
+		panic(err)
+	}
+	defer sdl.Quit()
+
+	var err error
+	g.Window, err = sdl.CreateWindow(g.windowName, sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
+		int32(settings.GameSettings().WindowWidth), int32(settings.GameSettings().WindowHeigh), sdl.WINDOW_SHOWN)
+	if err != nil {
+		panic(err)
+	}
+	defer g.Window.Destroy()
+
+	g.Surface, err = g.Window.GetSurface()
+	if err != nil {
+		panic(err)
+	}
+	g.Surface.FillRect(nil, 0)
+
+	rect := sdl.Rect{0, 0, 200, 200}
+	g.Surface.FillRect(&rect, 0xffff0000)
+	g.Window.UpdateSurface()
+	running := true
+	for running {
+		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
+			switch event.(type) {
+			case *sdl.QuitEvent:
+				println("Quit")
+				running = false
+				break
+			}
+			g.Update()
+			g.Draw()
+		}
+	}
 }
 
 func (g *Game) loadScene(sceneName string) {
@@ -35,63 +73,22 @@ func (g *Game) Update() error {
 
 // Draw draws the game screen.
 // Draw is called every frame (typically 1/60[s] for 60Hz display).
-func (g *Game) Draw(screen *ebiten.Image) {
+func (g *Game) Draw() {
 	// Write your game's rendering.
 
-	g.scenes[g.currentScene].Draw(screen)
+	//g.scenes[g.currentScene].Draw(screen)
 }
-
-// Layout takes the outside size (e.g., the window size) and returns the (logical) screen size.
-// If you don't have to adjust the screen size with the outside size, just return a fixed size.
-func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
-	return int(settings.GameSettings().LayoutWidth), int(settings.GameSettings().LayoutHeight)
-}
-
 
 func main() {
-	game := &Game{}
+	game := Game{windowName: "Unstopable Fellowship"}
 
-	////start Screen
-	//villageScene := scenes.VillageScene{}
-	//villageScene.EmbeddedFS = &embeddedFS
-	//game.scenes = map[string]scenes.Scene{"village": &villageScene}
+	//start Screen
+	villageScene := scenes.VillageScene{}
+	villageScene.EmbeddedFS = &embeddedFS
+	game.scenes = map[string]scenes.Scene{"village": &villageScene}
 
-	////set scene
-	//game.loadScene("village")
+	//set scene
+	game.loadScene("village")
 
-	// Specify the window size as you like. Here, a doubled size is specified.
-	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
-		panic(err)
-	}
-	defer sdl.Quit()
-
-	var err error
-	game.Window, err = sdl.CreateWindow("test", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
-		int32(settings.GameSettings().WindowWidth), int32(settings.GameSettings().WindowHeigh), sdl.WINDOW_SHOWN)
-	if err != nil {
-		panic(err)
-	}
-	defer game.Window.Destroy()
-
-	game.Surface, err = game.Window.GetSurface()
-	if err != nil {
-		panic(err)
-	}
-	game.Surface.FillRect(nil, 0)
-
-	rect := sdl.Rect{0, 0, 200, 200}
-	game.Surface.FillRect(&rect, 0xffff0000)
-	game.Window.UpdateSurface()
-
-	running := true
-	for running {
-		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch event.(type) {
-			case *sdl.QuitEvent:
-				println("Quit")
-				running = false
-				break
-			}
-		}
-	}
+	game.run()
 }
