@@ -20,37 +20,38 @@ type VillageScene struct {
 	initialHeroPosY uint16
 }
 
-
-
 func (startScreen *VillageScene) Update() {
 	dt := time.Now()
 	startScreen.clock = fmt.Sprintf("time now: %s", dt.String())
 }
 
 func (startScreen *VillageScene) Draw(renderer *sdl.Renderer) {
-
-	//
 	//sx := float64(settings.GameSettings().ScreenWidth / (startScreen.gameMap.Width * startScreen.gameMap.TileWidth))
 	//sy := float64(settings.GameSettings().ScreenHeight / (startScreen.gameMap.Height * startScreen.gameMap.TileHeight))
-	//for _, l := range startScreen.gameMap.Layers {
-	//	layerTilesIDSlice, err := l.Data.DecodeCSVTileData()
-	//	if err != nil {
-	//		fmt.Println(err)
-	//		os.Exit(2)
-	//	}
-	//	// Draw tiles
-	//	for _, id := range layerTilesIDSlice {
-	//		id -= 1
+	for _, l := range startScreen.gameMap.Layers {
+		layerTilesIDSlice, err := l.Data.DecodeCSVTileData()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
+		// Draw tiles
+		for i, id := range layerTilesIDSlice {
+			id -= 1
 
-	//		x0 := (int(id) % startScreen.gameMap.Tileset.Columns) * startScreen.gameMap.Tileset.TileWidth
-	//		y0 := (int(id) / startScreen.gameMap.Tileset.Columns) * startScreen.gameMap.Tileset.TileHeight
-	//		x1, y1 := x0+startScreen.gameMap.Tileset.TileWidth, y0+startScreen.gameMap.Tileset.TileHeight
+			// Coordinates of sprite slice
+			x0 := (int(id) % startScreen.gameMap.Tileset.Columns) * startScreen.gameMap.Tileset.TileWidth
+			y0 := (int(id) / startScreen.gameMap.Tileset.Columns) * startScreen.gameMap.Tileset.TileHeight
+			//x1, y1 := x0+startScreen.gameMap.Tileset.TileWidth, y0+startScreen.gameMap.Tileset.TileHeight
 
-	//		src := sdl.Rect{int32(x1), int32(y1), 16, 16}
-	//		dst := sdl.Rect{0, 0, int32(settings.GameSettings().WindowWidth), int32(settings.GameSettings().WindowHeigh)}
-	//		renderer.Copy(startScreen.gameMap.Tileset.Texture, &src, &dst)
-	//	}
-	//}
+			// Coordinates of sprite destination
+			ix0 := (int(i) % startScreen.gameMap.Tileset.Columns) * startScreen.gameMap.Tileset.TileWidth
+			iy0 := (int(i) / startScreen.gameMap.Tileset.Columns) * startScreen.gameMap.Tileset.TileHeight
+
+			src := sdl.Rect{int32(x0), int32(y0), 16, 16}
+			dst := sdl.Rect{int32(ix0), int32(iy0), 16, 16}
+			renderer.Copy(startScreen.gameMap.Tileset.Texture, &src, &dst)
+		}
+	}
 	//	// Draw Characters
 	//	for _, obj := range startScreen.characters {
 	//		if uint32(obj.DrawAfterLayer) == l.ID {
@@ -93,4 +94,7 @@ func (startScreen *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		fmt.Println(loadMapTMXErr)
 		os.Exit(2)
 	}
+}
+func (startScreen *VillageScene) onDestroy() {
+	defer startScreen.gameMap.Tileset.Texture.Destroy()
 }
