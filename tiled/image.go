@@ -3,8 +3,8 @@ package tiled
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/hajimehoshi/ebiten/v2"
-	"image"
+	"github.com/veandco/go-sdl2/img"
+	"github.com/veandco/go-sdl2/sdl"
 	"io/ioutil"
 	"os"
 )
@@ -27,19 +27,7 @@ type Tileset struct {
 	TileCount  int      `xml:"tilecount,attr"`
 	Columns    int      `xml:"columns,attr"`
 	ImageMetadata      Image    `xml:"image"`
-	Image *ebiten.Image
-}
-
-func (t *Tileset) GetTileImgByID(id int) *ebiten.Image {
-	// The tsx format starts counting tiles from 1, so to make these calculations
-	// work correctly, we need to decrement the ID by 1
-	id -= 1
-
-	x0 := (id % t.Columns) * t.TileWidth
-	y0 := (id / t.Columns) * t.TileHeight
-	x1, y1 := x0+t.TileWidth, y0+t.TileHeight
-
-	return t.Image.SubImage(image.Rect(x0, y0, x1, y1)).(*ebiten.Image)
+	Texture *sdl.Texture
 }
 
 func (t *Tileset) LoadDataFromTSXFile() (*Tileset, error){
@@ -66,26 +54,20 @@ func (t *Tileset) LoadDataFromTSXFile() (*Tileset, error){
 	}
 	return t, nil
 }
-func (t *Tileset) LoadTileSetImage(){
-	var tilesetIMG *ebiten.Image
-	{
-		// change to tileset dir
-		_ = os.Chdir("assets/tilesets/")
-		imgFile, err := os.Open(t.ImageMetadata.Source)
-		// change back to root
-		os.Chdir("../../")
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(2)
-		}
-
-		img, _, err := image.Decode(imgFile)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(2)
-		}
-
-		tilesetIMG = ebiten.NewImageFromImage(img)
+func (t *Tileset) LoadTileSetTexture(renderer *sdl.Renderer){
+	_ = os.Chdir("assets/tilesets/")
+	surface, err := img.Load(t.ImageMetadata.Source)
+	os.Chdir("../../")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to load PNG: %s\n", err)
+		os.Exit(2)
 	}
-	t.Image = tilesetIMG
+	defer surface.Free()
+
+	t.Texture, err = renderer.CreateTextureFromSurface(surface)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to create texture: %s\n", err)
+		os.Exit(2)
+	}
+	defer t.Texture.Destroy()
 }

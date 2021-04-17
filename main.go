@@ -42,6 +42,8 @@ func (g Game) run()  {
 	}
 	defer g.renderer.Destroy()
 
+	g.loadScene("village")
+
 	running := true
 	for running {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
@@ -59,7 +61,7 @@ func (g Game) run()  {
 
 func (g *Game) loadScene(sceneName string) {
 	g.currentScene = sceneName
-	g.scenes[g.currentScene].OnLoad()
+	g.scenes[g.currentScene].OnLoad(g.renderer)
 }
 
 // Update proceeds the game state.
@@ -75,6 +77,7 @@ func (g *Game) Draw() {
 	// fazer um blog post
 	// https://stackoverflow.com/questions/21007329/what-is-an-sdl-renderer
 
+	g.renderer.Clear()
 	g.scenes[g.currentScene].Draw(g.renderer)
 	g.renderer.Present()
 	sdl.Delay(16)
@@ -88,8 +91,6 @@ func main() {
 	villageScene.EmbeddedFS = &embeddedFS
 	game.scenes = map[string]scenes.Scene{"village": &villageScene}
 
-	//set scene
-	game.loadScene("village")
 
 	game.run()
 }

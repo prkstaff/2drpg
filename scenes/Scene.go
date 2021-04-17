@@ -6,7 +6,7 @@ import (
 )
 
 type Scene interface {
-	OnLoad()
+	OnLoad(renderer *sdl.Renderer)
 	Update()
 	Draw(renderer *sdl.Renderer)
 }
