@@ -3,6 +3,7 @@ package tiled
 import (
 	"encoding/xml"
 	"fmt"
+	"github.com/prkstaff/2drpg/settings"
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
 	"io/ioutil"
@@ -69,5 +70,12 @@ func (t *Tileset) LoadTileSetTexture(renderer *sdl.Renderer){
 		fmt.Fprintf(os.Stderr, "Failed to create texture: %s\n", err)
 		os.Exit(2)
 	}
+	// to-do tentar desenhar aqui a img inteira
 	defer t.Texture.Destroy()
+	src := sdl.Rect{0, 0, 16, 16}
+	dst := sdl.Rect{0, 0, int32(settings.GameSettings().WindowWidth), int32(settings.GameSettings().WindowHeigh)}
+	renderer.Clear()
+	renderer.Copy(t.Texture, &src, &dst)
+	renderer.Present()
+	sdl.Delay(10000)
 }
