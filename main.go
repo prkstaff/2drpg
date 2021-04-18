@@ -12,7 +12,6 @@ import (
 // embeddedFS holds our game assets so we can distribute our game as a single binary
 //go:embed assets/maps/main.tmx assets/tilesets/tileset.png assets/tilesets/tileset.tsx
 var embeddedFS embed.FS
-
 // Game implements ebiten.Game interface.
 type Game struct {
 	scenes       map[string]scenes.Scene
@@ -23,6 +22,8 @@ type Game struct {
 }
 
 func (g Game) run()  {
+	key_states := sdl.GetKeyboardState()
+
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		panic(err)
 	}
@@ -55,6 +56,12 @@ func (g Game) run()  {
 			}
 			g.Update()
 			g.Draw()
+		}
+		if key_states[sdl.SCANCODE_A] == 1 {
+			fmt.Println("A pressed")
+		}
+		if key_states[sdl.SCANCODE_W] == 1 {
+			fmt.Println("w pressed")
 		}
 	}
 }
