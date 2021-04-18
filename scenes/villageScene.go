@@ -4,9 +4,11 @@ import (
 	"embed"
 	"fmt"
 	"github.com/prkstaff/2drpg/characters"
+	"github.com/prkstaff/2drpg/settings"
 	"github.com/prkstaff/2drpg/tiled"
 	"github.com/veandco/go-sdl2/sdl"
 	"log"
+	"math"
 	"os"
 	"time"
 )
@@ -26,8 +28,8 @@ func (startScreen *VillageScene) Update() {
 }
 
 func (startScreen *VillageScene) Draw(renderer *sdl.Renderer) {
-	//sx := float64(settings.GameSettings().ScreenWidth / (startScreen.gameMap.Width * startScreen.gameMap.TileWidth))
-	//sy := float64(settings.GameSettings().ScreenHeight / (startScreen.gameMap.Height * startScreen.gameMap.TileHeight))
+	tileset := startScreen.gameMap.Tileset
+
 	for _, l := range startScreen.gameMap.Layers {
 		layerTilesIDSlice, err := l.Data.DecodeCSVTileData()
 		if err != nil {
@@ -39,19 +41,37 @@ func (startScreen *VillageScene) Draw(renderer *sdl.Renderer) {
 			id -= 1
 
 			// Coordinates of sprite slice
-			x0 := (int(id) % startScreen.gameMap.Tileset.Columns) * startScreen.gameMap.Tileset.TileWidth
-			y0 := (int(id) / startScreen.gameMap.Tileset.Columns) * startScreen.gameMap.Tileset.TileHeight
+			x0 := (int(id) % tileset.Columns) * tileset.TileWidth
+			y0 := (int(id) / tileset.Columns) * tileset.TileHeight
 			//x1, y1 := x0+startScreen.gameMap.Tileset.TileWidth, y0+startScreen.gameMap.Tileset.TileHeight
 
 			// Coordinates of sprite destination
-			ix0 := (i % int(startScreen.gameMap.Width)) * startScreen.gameMap.Tileset.TileWidth
-			iy0 := (i / int(startScreen.gameMap.Width)) * startScreen.gameMap.Tileset.TileHeight
+			ix0 := (i % int(startScreen.gameMap.Width)) * tileset.TileWidth
+			iy0 := (i / int(startScreen.gameMap.Width)) * tileset.TileHeight
 
 			// Calculate draw scale
-			//tileseRawTotalWidth := startScreen.gameMap.Tileset.Columns * startScreen.gameMap.Tileset.TileWidth
+			wWidth := settings.GameSettings().WindowWidth
+			wHeight := settings.GameSettings().WindowHeigh
+			sx := float64(wWidth) / (float64(startScreen.gameMap.Width) * float64(startScreen.gameMap.TileWidth))
+			sy := float64(wHeight) / (float64(startScreen.gameMap.Height) * float64(startScreen.gameMap.TileHeight))
+
+			var safeScale float64
+
+			// since its not good to strech a pixel by subdecimal points we will floor
+			// also to fit the screen, ceil would not fit the screen
+			if sx < sy {
+				safeScale = math.Floor(sx)
+			}else{
+				safeScale = math.Floor(sy)
+			}
+
+			// scaled destinations
+			scaledXPos := float64(ix0)*safeScale
+			scaledYPos := float64(iy0)*safeScale
+
 
 			src := sdl.Rect{int32(x0), int32(y0), 16, 16}
-			dst := sdl.Rect{int32(ix0), int32(iy0), 16, 16}
+			dst := sdl.Rect{int32(scaledXPos), int32(scaledYPos), int32(16*safeScale), int32(16*safeScale)}
 			renderer.Copy(startScreen.gameMap.Tileset.Texture, &src, &dst)
 		}
 	}
