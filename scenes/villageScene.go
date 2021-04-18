@@ -44,8 +44,11 @@ func (startScreen *VillageScene) Draw(renderer *sdl.Renderer) {
 			//x1, y1 := x0+startScreen.gameMap.Tileset.TileWidth, y0+startScreen.gameMap.Tileset.TileHeight
 
 			// Coordinates of sprite destination
-			ix0 := (int(i) % startScreen.gameMap.Tileset.Columns) * startScreen.gameMap.Tileset.TileWidth
-			iy0 := (int(i) / startScreen.gameMap.Tileset.Columns) * startScreen.gameMap.Tileset.TileHeight
+			ix0 := (i % int(startScreen.gameMap.Width)) * startScreen.gameMap.Tileset.TileWidth
+			iy0 := (i / int(startScreen.gameMap.Width)) * startScreen.gameMap.Tileset.TileHeight
+
+			// Calculate draw scale
+			//tileseRawTotalWidth := startScreen.gameMap.Tileset.Columns * startScreen.gameMap.Tileset.TileWidth
 
 			src := sdl.Rect{int32(x0), int32(y0), 16, 16}
 			dst := sdl.Rect{int32(ix0), int32(iy0), 16, 16}
