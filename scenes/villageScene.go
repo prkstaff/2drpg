@@ -10,11 +10,9 @@ import (
 	"log"
 	"math"
 	"os"
-	"time"
 )
 
 type VillageScene struct {
-	clock           string
 	gameMap         *tiled.Map
 	EmbeddedFS      *embed.FS
 	characters []characters.Hero
@@ -23,8 +21,7 @@ type VillageScene struct {
 }
 
 func (startScreen *VillageScene) Update() {
-	dt := time.Now()
-	startScreen.clock = fmt.Sprintf("time now: %s", dt.String())
+
 }
 
 func (startScreen *VillageScene) Draw(renderer *sdl.Renderer) {

@@ -23,7 +23,7 @@ func GameSettings() *gameSettings {
 			LayoutWidth:  400,
 			LayoutHeight: 400,
 			WindowWidth:  1024,
-			WindowHeigh:  850,
+			WindowHeigh:  800,
 		} // <-- thread safe
 
 	})

@@ -20,14 +20,14 @@ type Hero struct{
 func (h *Hero) LoadSpriteIMG(renderer *sdl.Renderer)  {
 	surface, err := img.Load(h.SpritePath)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to load PNG: %s\n", err)
+		fmt.Printf("Failed to load PNG: %s\n", err)
 		os.Exit(2)
 	}
 	defer surface.Free()
 
 	h.Texture, err = renderer.CreateTextureFromSurface(surface)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to create texture: %s\n", err)
+		fmt.Printf("Failed to create texture: %s\n", err)
 		os.Exit(2)
 	}
 }
