@@ -29,6 +29,22 @@ func (startScreen *VillageScene) Update() {
 
 func (startScreen *VillageScene) Draw(renderer *sdl.Renderer) {
 	tileset := startScreen.gameMap.Tileset
+	// Calculate draw scale
+	wWidth := settings.GameSettings().WindowWidth
+	wHeight := settings.GameSettings().WindowHeigh
+	sx := float64(wWidth) / (float64(startScreen.gameMap.Width) * float64(startScreen.gameMap.TileWidth))
+	sy := float64(wHeight) / (float64(startScreen.gameMap.Height) * float64(startScreen.gameMap.TileHeight))
+
+	var safeScale float64
+
+	// since its not good to strech a pixel by subdecimal points we will floor
+	// also to fit the screen, ceil would not fit the screen
+	if sx < sy {
+		safeScale = math.Floor(sx)
+	} else {
+		safeScale = math.Floor(sy)
+	}
+	safeScale += 1
 
 	for _, l := range startScreen.gameMap.Layers {
 		layerTilesIDSlice, err := l.Data.DecodeCSVTileData()
@@ -49,43 +65,23 @@ func (startScreen *VillageScene) Draw(renderer *sdl.Renderer) {
 			ix0 := (i % int(startScreen.gameMap.Width)) * tileset.TileWidth
 			iy0 := (i / int(startScreen.gameMap.Width)) * tileset.TileHeight
 
-			// Calculate draw scale
-			wWidth := settings.GameSettings().WindowWidth
-			wHeight := settings.GameSettings().WindowHeigh
-			sx := float64(wWidth) / (float64(startScreen.gameMap.Width) * float64(startScreen.gameMap.TileWidth))
-			sy := float64(wHeight) / (float64(startScreen.gameMap.Height) * float64(startScreen.gameMap.TileHeight))
 
-			var safeScale float64
-
-			// since its not good to strech a pixel by subdecimal points we will floor
-			// also to fit the screen, ceil would not fit the screen
-			if sx < sy {
-				safeScale = math.Floor(sx)
-			}else{
-				safeScale = math.Floor(sy)
-			}
-			safeScale += 1
 
 			// scaled destinations
-			scaledXPos := float64(ix0)*safeScale
-			scaledYPos := float64(iy0)*safeScale
-
+			scaledXPos := float64(ix0) * safeScale
+			scaledYPos := float64(iy0) * safeScale
 
 			src := sdl.Rect{int32(x0), int32(y0), 16, 16}
-			dst := sdl.Rect{int32(scaledXPos), int32(scaledYPos), int32(16*safeScale), int32(16*safeScale)}
+			dst := sdl.Rect{int32(scaledXPos), int32(scaledYPos), int32(16 * safeScale), int32(16 * safeScale)}
 			renderer.Copy(startScreen.gameMap.Tileset.Texture, &src, &dst)
 		}
+		// Draw Characters
+		for _, obj := range startScreen.characters {
+			if uint32(obj.DrawAfterLayer) == l.ID {
+				obj.Draw(renderer, int32(safeScale))
+			}
+		}
 	}
-	//	// Draw Characters
-	//	for _, obj := range startScreen.characters {
-	//		if uint32(obj.DrawAfterLayer) == l.ID {
-	//			obj.Draw(screen, *startScreen.gameMap)
-	//		}
-	//	}
-	//}
-	//https://github.com/lafriks/go-tiled
-
-	//ebitenutil.DebugPrint(screen, startScreen.clock)
 }
 
 func (startScreen *VillageScene) OnLoad(renderer *sdl.Renderer) {
@@ -104,14 +100,14 @@ func (startScreen *VillageScene) OnLoad(renderer *sdl.Renderer) {
 	}
 	hero := characters.Hero{
 		SpritePath:   "assets/tilesets/character.png",
-		Sprite:       nil,
+		Texture:       nil,
 		SpriteWidth:  16,
 		SpriteHeight: 16,
 		XPos:         uint16(startPosObj.X),
 		YPos:         uint16(startPosObj.Y),
 		DrawAfterLayer: 2,
 	}
-	hero.LoadSpriteIMG()
+	hero.LoadSpriteIMG(renderer)
 	startScreen.characters = append(startScreen.characters, hero)
 	startScreen.gameMap.Tileset.LoadTileSetTexture(renderer)
 	if loadMapTMXErr != nil {

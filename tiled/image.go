@@ -69,5 +69,4 @@ func (t *Tileset) LoadTileSetTexture(renderer *sdl.Renderer){
 		fmt.Fprintf(os.Stderr, "Failed to create texture: %s\n", err)
 		os.Exit(2)
 	}
-	// to-do tentar desenhar aqui a img inteira
 }

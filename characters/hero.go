@@ -2,16 +2,14 @@ package characters
 
 import (
 	"fmt"
-	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/prkstaff/2drpg/settings"
-	"github.com/prkstaff/2drpg/tiled"
-	"image"
+	"github.com/veandco/go-sdl2/img"
+	"github.com/veandco/go-sdl2/sdl"
 	"os"
 )
 
 type Hero struct{
 	SpritePath string
-	Sprite *ebiten.Image
+	Texture *sdl.Texture
 	SpriteWidth uint16
 	SpriteHeight uint16
 	XPos uint16
@@ -19,48 +17,23 @@ type Hero struct{
 	DrawAfterLayer uint8
 }
 
-func (h *Hero) LoadSpriteIMG()  {
-	var spriteImage *ebiten.Image
-	{
-		imgFile, err := os.Open(h.SpritePath)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(2)
-		}
-
-		img, _, err := image.Decode(imgFile)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(2)
-		}
-
-		spriteImage = ebiten.NewImageFromImage(img)
+func (h *Hero) LoadSpriteIMG(renderer *sdl.Renderer)  {
+	surface, err := img.Load(h.SpritePath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to load PNG: %s\n", err)
+		os.Exit(2)
 	}
-	h.Sprite = spriteImage
+	defer surface.Free()
+
+	h.Texture, err = renderer.CreateTextureFromSurface(surface)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Failed to create texture: %s\n", err)
+		os.Exit(2)
+	}
 }
 
-func (h Hero) Draw(screen *ebiten.Image, gameMap tiled.Map) {
-	op := &ebiten.DrawImageOptions{}
-	sx := float64(settings.GameSettings().ScreenWidth / (gameMap.Width * gameMap.TileWidth))
-	sy := float64(settings.GameSettings().ScreenHeight / (gameMap.Height * gameMap.TileHeight))
-	i := 1
-	op.GeoM.Translate(
-		float64((uint16(i)%gameMap.Width)*gameMap.TileWidth),
-		float64((uint16(i)/gameMap.Height)*gameMap.TileHeight),
-	)
-	op.GeoM.Scale(sx, sy)
-
-	screen.DrawImage(h.GetSpriteImgByID(int(1)), op)
-}
-
-func (h *Hero) GetSpriteImgByID(id int) *ebiten.Image {
-	// The tsx format starts counting tiles from 1, so to make these calculations
-	// work correctly, we need to decrement the ID by 1
-	id -= 1
-
-	//x0 := (id % t.Columns) * t.TileWidth
-	//y0 := (id / t.Columns) * t.TileHeight
-	//x1, y1 := x0+t.TileWidth, y0+t.TileHeight
-
-	return h.Sprite.SubImage(image.Rect(0, 0, 16, 32)).(*ebiten.Image)
+func (h Hero) Draw(renderer *sdl.Renderer, scale int32) {
+	src := sdl.Rect{X: 0, Y:0, W:16, H:32}
+	dst := sdl.Rect{X: int32(h.XPos)*scale, Y:int32(h.YPos)*scale, W:16*scale, H:32*scale}
+	renderer.Copy(h.Texture, &src, &dst)
 }
