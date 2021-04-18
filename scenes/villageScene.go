@@ -64,6 +64,7 @@ func (startScreen *VillageScene) Draw(renderer *sdl.Renderer) {
 			}else{
 				safeScale = math.Floor(sy)
 			}
+			safeScale += 1
 
 			// scaled destinations
 			scaledXPos := float64(ix0)*safeScale
