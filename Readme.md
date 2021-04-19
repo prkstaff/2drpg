@@ -33,3 +33,13 @@ from: www.deviantart.com/magiscarf
 
 ## Hero Sprite
 from: https://www.deviantart.com/carmenmcs/
+
+## TODO
+command 245
+ter um metodo onclose e liberar tudo que foi iniciado. book pag 146
+
+## Estudio
+Alberto Drummond
+
+## Boas inspirações
+
