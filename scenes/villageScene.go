@@ -4,6 +4,7 @@ import (
 	"embed"
 	"fmt"
 	"github.com/prkstaff/2drpg/characters"
+	"github.com/prkstaff/2drpg/input"
 	"github.com/prkstaff/2drpg/settings"
 	"github.com/prkstaff/2drpg/tiled"
 	"github.com/veandco/go-sdl2/sdl"
@@ -18,19 +19,21 @@ type VillageScene struct {
 	characters []characters.Hero
 	initialHeroPosX uint16
 	initialHeroPosY uint16
+	inputHandler input.InputHandler
 }
 
-func (startScreen *VillageScene) Update() {
-
+func (v *VillageScene) Update() {
+	hero := v.characters[0]
+	v.inputHandler.HandleInput(&hero)
 }
 
-func (startScreen *VillageScene) Draw(renderer *sdl.Renderer) {
-	tileset := startScreen.gameMap.Tileset
+func (v *VillageScene) Draw(renderer *sdl.Renderer) {
+	tileset := v.gameMap.Tileset
 	// Calculate draw scale
 	wWidth := settings.GameSettings().WindowWidth
 	wHeight := settings.GameSettings().WindowHeigh
-	sx := float64(wWidth) / (float64(startScreen.gameMap.Width) * float64(startScreen.gameMap.TileWidth))
-	sy := float64(wHeight) / (float64(startScreen.gameMap.Height) * float64(startScreen.gameMap.TileHeight))
+	sx := float64(wWidth) / (float64(v.gameMap.Width) * float64(v.gameMap.TileWidth))
+	sy := float64(wHeight) / (float64(v.gameMap.Height) * float64(v.gameMap.TileHeight))
 
 	var safeScale float64
 
@@ -43,7 +46,7 @@ func (startScreen *VillageScene) Draw(renderer *sdl.Renderer) {
 	}
 	safeScale += 1
 
-	for _, l := range startScreen.gameMap.Layers {
+	for _, l := range v.gameMap.Layers {
 		layerTilesIDSlice, err := l.Data.DecodeCSVTileData()
 		if err != nil {
 			fmt.Println(err)
@@ -59,8 +62,8 @@ func (startScreen *VillageScene) Draw(renderer *sdl.Renderer) {
 			//x1, y1 := x0+startScreen.gameMap.Tileset.TileWidth, y0+startScreen.gameMap.Tileset.TileHeight
 
 			// Coordinates of sprite destination
-			ix0 := (i % int(startScreen.gameMap.Width)) * tileset.TileWidth
-			iy0 := (i / int(startScreen.gameMap.Width)) * tileset.TileHeight
+			ix0 := (i % int(v.gameMap.Width)) * tileset.TileWidth
+			iy0 := (i / int(v.gameMap.Width)) * tileset.TileHeight
 
 
 
@@ -70,10 +73,10 @@ func (startScreen *VillageScene) Draw(renderer *sdl.Renderer) {
 
 			src := sdl.Rect{int32(x0), int32(y0), 16, 16}
 			dst := sdl.Rect{int32(scaledXPos), int32(scaledYPos), int32(16 * safeScale), int32(16 * safeScale)}
-			renderer.Copy(startScreen.gameMap.Tileset.Texture, &src, &dst)
+			renderer.Copy(v.gameMap.Tileset.Texture, &src, &dst)
 		}
 		// Draw Characters
-		for _, obj := range startScreen.characters {
+		for _, obj := range v.characters {
 			if uint32(obj.DrawAfterLayer) == l.ID {
 				obj.Draw(renderer, int32(safeScale))
 			}
@@ -81,16 +84,17 @@ func (startScreen *VillageScene) Draw(renderer *sdl.Renderer) {
 	}
 }
 
-func (startScreen *VillageScene) OnLoad(renderer *sdl.Renderer) {
+func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
+	v.inputHandler = input.InputHandler{}
 	var loadMapTMXErr error
-	startScreen.gameMap, loadMapTMXErr = tiled.ReadTMX("assets/maps/main.tmx")
-	_, err2 := startScreen.gameMap.Tileset.LoadDataFromTSXFile()
+	v.gameMap, loadMapTMXErr = tiled.ReadTMX("assets/maps/main.tmx")
+	_, err2 := v.gameMap.Tileset.LoadDataFromTSXFile()
 	if err2 != nil {
 		fmt.Println(err2)
 		os.Exit(2)
 	}
 
-	startPosObj, startPosObjErr := startScreen.gameMap.Objects.GetObjectByName("StartPos")
+	startPosObj, startPosObjErr := v.gameMap.Objects.GetObjectByName("StartPos")
 	if startPosObjErr != nil {
 		log.Print(startPosObjErr)
 		os.Exit(2)
@@ -105,13 +109,13 @@ func (startScreen *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		DrawAfterLayer: 2,
 	}
 	hero.LoadSpriteIMG(renderer)
-	startScreen.characters = append(startScreen.characters, hero)
-	startScreen.gameMap.Tileset.LoadTileSetTexture(renderer)
+	v.characters = append(v.characters, hero)
+	v.gameMap.Tileset.LoadTileSetTexture(renderer)
 	if loadMapTMXErr != nil {
 		fmt.Println(loadMapTMXErr)
 		os.Exit(2)
 	}
 }
-func (startScreen *VillageScene) onDestroy() {
-	defer startScreen.gameMap.Tileset.Texture.Destroy()
+func (v *VillageScene) onDestroy() {
+	defer v.gameMap.Tileset.Texture.Destroy()
 }

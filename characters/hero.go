@@ -6,6 +6,12 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"os"
 )
+type Actor interface {
+	MoveUp()
+	MoveDown()
+	MoveLeft()
+	MoveRight()
+}
 
 type Hero struct{
 	SpritePath string
@@ -36,4 +42,17 @@ func (h Hero) Draw(renderer *sdl.Renderer, scale int32) {
 	src := sdl.Rect{X: 0, Y:0, W:16, H:32}
 	dst := sdl.Rect{X: int32(h.XPos)*scale, Y:int32(h.YPos)*scale, W:16*scale, H:32*scale}
 	renderer.Copy(h.Texture, &src, &dst)
+}
+
+func (h Hero) MoveUp()  {
+
+}
+func (h Hero) MoveDown()  {
+
+}
+func (h Hero) MoveLeft()  {
+
+}
+func (h Hero) MoveRight()  {
+
 }

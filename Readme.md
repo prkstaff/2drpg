@@ -42,4 +42,9 @@ ter um metodo onclose e liberar tudo que foi iniciado. book pag 146
 Alberto Drummond
 
 ## Boas inspirações
+livros do stephen king
 
+## Ideias de cenas
+### Dois irmãos que não se falam
+Há dois irmão que não se falam. Cada um diz que acha que o outro não gosta dele.
+Personagem abre a porta entre os dois e coloca um pão cheiroso no meio, os dois voltam a se falar.
