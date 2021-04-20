@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/prkstaff/2drpg/tiled"
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -23,6 +24,12 @@ type Hero struct {
 	XPos           uint16
 	YPos           uint16
 	DrawAfterLayer uint8
+	tileset        tiled.Tileset
+}
+
+func (h *Hero) LoadTileset() {
+	h.tileset = tiled.Tileset{Source: "heroSpriteSheet.tsx"}
+	h.tileset.LoadDataFromTSXFile()
 }
 
 func (h *Hero) LoadSpriteIMG(renderer *sdl.Renderer) {
@@ -48,9 +55,7 @@ func (h Hero) Draw(renderer *sdl.Renderer, scale int32) {
 
 func (h *Hero) MoveUp() {
 	if h.YPos >= 1 {
-		fmt.Println(h.YPos)
 		h.YPos = h.YPos - 1
-		fmt.Println(h.YPos)
 	}
 }
 func (h *Hero) MoveDown() {
