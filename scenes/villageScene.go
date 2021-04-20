@@ -17,7 +17,7 @@ import (
 type VillageScene struct {
 	gameMap         *tiled.Map
 	EmbeddedFS      *embed.FS
-	characters      []characters.Hero
+	characters      []*characters.Hero
 	initialHeroPosX uint16
 	initialHeroPosY uint16
 	inputHandler    input.InputHandler
@@ -43,7 +43,7 @@ func (v *VillageScene) Update(keyStates []uint8) {
 	}
 
 	hero := v.characters[0]
-	v.inputHandler.HandleInput(&hero)
+	v.inputHandler.HandleInput(hero)
 }
 
 func (v *VillageScene) Draw(renderer *sdl.Renderer) {
@@ -102,6 +102,7 @@ func (v *VillageScene) Draw(renderer *sdl.Renderer) {
 }
 
 func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
+	fmt.Println("Called")
 	v.inputHandler = input.InputHandler{}
 	var loadMapTMXErr error
 	v.gameMap, loadMapTMXErr = tiled.ReadTMX("assets/maps/main.tmx")
@@ -126,7 +127,7 @@ func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		DrawAfterLayer: 2,
 	}
 	hero.LoadSpriteIMG(renderer)
-	v.characters = append(v.characters, hero)
+	v.characters = append(v.characters, &hero)
 	v.gameMap.Tileset.LoadTileSetTexture(renderer)
 	if loadMapTMXErr != nil {
 		fmt.Println(loadMapTMXErr)

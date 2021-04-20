@@ -46,15 +46,21 @@ func (h Hero) Draw(renderer *sdl.Renderer, scale int32) {
 	renderer.Copy(h.Texture, &src, &dst)
 }
 
-func (h Hero) MoveUp() {
-	fmt.Println("up")
+func (h *Hero) MoveUp() {
+	if h.YPos >= 1 {
+		fmt.Println(h.YPos)
+		h.YPos = h.YPos - 1
+		fmt.Println(h.YPos)
+	}
 }
-func (h Hero) MoveDown() {
-	fmt.Println("down")
+func (h *Hero) MoveDown() {
+	h.YPos += 1
 }
-func (h Hero) MoveLeft() {
-	fmt.Println("left")
+func (h *Hero) MoveLeft() {
+	if h.XPos >= 1 {
+		h.XPos -= 1
+	}
 }
-func (h Hero) MoveRight() {
-	fmt.Println("right")
+func (h *Hero) MoveRight() {
+	h.XPos += 1
 }
