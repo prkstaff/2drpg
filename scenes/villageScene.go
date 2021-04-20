@@ -124,7 +124,7 @@ func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		SpriteHeight:   16,
 		XPos:           uint16(startPosObj.X),
 		YPos:           uint16(startPosObj.Y),
-		DrawAfterLayer: 2,
+		DrawAfterLayer: 3,
 	}
 	hero.LoadSpriteIMG(renderer)
 	v.characters = append(v.characters, &hero)
