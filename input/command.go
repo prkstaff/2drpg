@@ -7,12 +7,12 @@ type Command interface {
 }
 
 type InputHandler struct {
-	commands []Command
+	Commands []Command
 }
 
-func (h InputHandler) HandleInput(actor characters.Actor)  {
-	if len(h.commands) > 0 {
-		for _, command := range h.commands{
+func (h InputHandler) HandleInput(actor characters.Actor) {
+	if len(h.Commands) > 0 {
+		for _, command := range h.Commands {
 			command.Execute(actor)
 		}
 	}

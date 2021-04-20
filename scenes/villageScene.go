@@ -3,26 +3,45 @@ package scenes
 import (
 	"embed"
 	"fmt"
+	"log"
+	"math"
+	"os"
+
 	"github.com/prkstaff/2drpg/characters"
 	"github.com/prkstaff/2drpg/input"
 	"github.com/prkstaff/2drpg/settings"
 	"github.com/prkstaff/2drpg/tiled"
 	"github.com/veandco/go-sdl2/sdl"
-	"log"
-	"math"
-	"os"
 )
 
 type VillageScene struct {
 	gameMap         *tiled.Map
 	EmbeddedFS      *embed.FS
-	characters []characters.Hero
+	characters      []characters.Hero
 	initialHeroPosX uint16
 	initialHeroPosY uint16
-	inputHandler input.InputHandler
+	inputHandler    input.InputHandler
 }
 
-func (v *VillageScene) Update() {
+func (v *VillageScene) Update(keyStates []uint8) {
+	v.inputHandler.Commands = nil
+	if keyStates[sdl.SCANCODE_W] == 1 {
+		mvUp := input.MoveUpCommand{}
+		v.inputHandler.Commands = append(v.inputHandler.Commands, mvUp)
+	}
+	if keyStates[sdl.SCANCODE_S] == 1 {
+		mvDw := input.MoveDownCommand{}
+		v.inputHandler.Commands = append(v.inputHandler.Commands, mvDw)
+	}
+	if keyStates[sdl.SCANCODE_A] == 1 {
+		mvLf := input.MoveLeftCommand{}
+		v.inputHandler.Commands = append(v.inputHandler.Commands, mvLf)
+	}
+	if keyStates[sdl.SCANCODE_D] == 1 {
+		mvRg := input.MoveRightCommand{}
+		v.inputHandler.Commands = append(v.inputHandler.Commands, mvRg)
+	}
+
 	hero := v.characters[0]
 	v.inputHandler.HandleInput(&hero)
 }
@@ -65,8 +84,6 @@ func (v *VillageScene) Draw(renderer *sdl.Renderer) {
 			ix0 := (i % int(v.gameMap.Width)) * tileset.TileWidth
 			iy0 := (i / int(v.gameMap.Width)) * tileset.TileHeight
 
-
-
 			// scaled destinations
 			scaledXPos := float64(ix0) * safeScale
 			scaledYPos := float64(iy0) * safeScale
@@ -100,12 +117,12 @@ func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		os.Exit(2)
 	}
 	hero := characters.Hero{
-		SpritePath:   "assets/tilesets/character.png",
-		Texture:       nil,
-		SpriteWidth:  16,
-		SpriteHeight: 16,
-		XPos:         uint16(startPosObj.X),
-		YPos:         uint16(startPosObj.Y),
+		SpritePath:     "assets/tilesets/character.png",
+		Texture:        nil,
+		SpriteWidth:    16,
+		SpriteHeight:   16,
+		XPos:           uint16(startPosObj.X),
+		YPos:           uint16(startPosObj.Y),
 		DrawAfterLayer: 2,
 	}
 	hero.LoadSpriteIMG(renderer)

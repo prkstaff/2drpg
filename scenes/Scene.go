@@ -1,12 +1,13 @@
 package scenes
 
 import (
-	"github.com/veandco/go-sdl2/sdl"
 	_ "image/png"
+
+	"github.com/veandco/go-sdl2/sdl"
 )
 
 type Scene interface {
 	OnLoad(renderer *sdl.Renderer)
-	Update()
+	Update(keyStates []uint8)
 	Draw(renderer *sdl.Renderer)
 }

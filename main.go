@@ -3,26 +3,29 @@ package main
 import (
 	"embed"
 	"fmt"
+	"os"
+
 	"github.com/prkstaff/2drpg/scenes"
 	"github.com/prkstaff/2drpg/settings"
 	"github.com/veandco/go-sdl2/sdl"
-	"os"
 )
 
 // embeddedFS holds our game assets so we can distribute our game as a single binary
 //go:embed assets/maps/main.tmx assets/tilesets/tileset.png assets/tilesets/tileset.tsx
 var embeddedFS embed.FS
+
 // Game implements ebiten.Game interface.
 type Game struct {
 	scenes       map[string]scenes.Scene
 	currentScene string
-	Window *sdl.Window
-	windowName string
-	renderer *sdl.Renderer
+	Window       *sdl.Window
+	windowName   string
+	renderer     *sdl.Renderer
+	keyStates    []uint8
 }
 
-func (g Game) run()  {
-	key_states := sdl.GetKeyboardState()
+func (g Game) run() {
+	g.keyStates = sdl.GetKeyboardState()
 
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		panic(err)
@@ -36,7 +39,7 @@ func (g Game) run()  {
 		panic(err)
 	}
 	defer g.Window.Destroy()
-	g.renderer , err = sdl.CreateRenderer(g.Window, -1, sdl.RENDERER_ACCELERATED)
+	g.renderer, err = sdl.CreateRenderer(g.Window, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Failed to create renderer: %s\n", err)
 		os.Exit(2)
@@ -48,7 +51,7 @@ func (g Game) run()  {
 	running := true
 	for running {
 		for event := sdl.PollEvent(); event != nil; event = sdl.PollEvent() {
-			switch event.(type)  {
+			switch event.(type) {
 			case *sdl.QuitEvent:
 				println("Quit")
 				running = false
@@ -56,12 +59,6 @@ func (g Game) run()  {
 			}
 			g.Update()
 			g.Draw()
-		}
-		if key_states[sdl.SCANCODE_A] == 1 {
-			fmt.Println("A pressed")
-		}
-		if key_states[sdl.SCANCODE_W] == 1 {
-			fmt.Println("w pressed")
 		}
 	}
 }
@@ -75,7 +72,7 @@ func (g *Game) loadScene(sceneName string) {
 // Update is called every tick (1/60 [s] by default).
 func (g *Game) Update() {
 	// Write your game's logical update.
-	g.scenes[g.currentScene].Update()
+	g.scenes[g.currentScene].Update(g.keyStates)
 }
 
 // Draw draws the game screen.
@@ -97,7 +94,6 @@ func main() {
 	villageScene := scenes.VillageScene{}
 	villageScene.EmbeddedFS = &embeddedFS
 	game.scenes = map[string]scenes.Scene{"village": &villageScene}
-
 
 	game.run()
 }
