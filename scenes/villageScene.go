@@ -3,6 +3,7 @@ package scenes
 import (
 	"embed"
 	"fmt"
+	"github.com/prkstaff/2drpg/sprite"
 	"log"
 	"math"
 	"os"
@@ -25,25 +26,34 @@ type VillageScene struct {
 
 func (v *VillageScene) Update(keyStates []uint8) {
 	v.inputHandler.Commands = nil
+	var anyKeyMovePressed bool
 	if keyStates[sdl.SCANCODE_W] == 1 {
+		anyKeyMovePressed = true
 		mvUp := input.MoveUpCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvUp)
 	}
 	if keyStates[sdl.SCANCODE_S] == 1 {
+		anyKeyMovePressed = true
 		mvDw := input.MoveDownCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvDw)
 	}
 	if keyStates[sdl.SCANCODE_A] == 1 {
+		anyKeyMovePressed = true
 		mvLf := input.MoveLeftCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvLf)
 	}
 	if keyStates[sdl.SCANCODE_D] == 1 {
+		anyKeyMovePressed = true
 		mvRg := input.MoveRightCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvRg)
 	}
-
 	hero := v.characters[0]
 	v.inputHandler.HandleInput(hero)
+	if anyKeyMovePressed {
+		hero.MoveKeyPressed = true
+	}else{
+		hero.MoveKeyPressed = false
+	}
 }
 
 func (v *VillageScene) Draw(renderer *sdl.Renderer) {
@@ -125,8 +135,11 @@ func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		XPos:           uint16(startPosObj.X),
 		YPos:           uint16(startPosObj.Y),
 		DrawAfterLayer: 3,
+		AnimationFrame: 0,
+		SpriteOrientation: "down",
+		TileKeys: sprite.TileAnimationKeys{Up:32,Down: 0,Left: 51,Right: 17},
 	}
-	hero.LoadSpriteIMG(renderer)
+	hero.Load(renderer)
 	v.characters = append(v.characters, &hero)
 	v.gameMap.Tileset.LoadTileSetTexture(renderer)
 	if loadMapTMXErr != nil {
