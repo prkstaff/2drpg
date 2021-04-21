@@ -85,11 +85,6 @@ func (v *VillageScene) Draw(renderer *sdl.Renderer) {
 		for i, id := range layerTilesIDSlice {
 			id -= 1
 
-			// Coordinates of sprite slice
-			x0 := (int(id) % tileset.Columns) * tileset.TileWidth
-			y0 := (int(id) / tileset.Columns) * tileset.TileHeight
-			//x1, y1 := x0+startScreen.gameMap.Tileset.TileWidth, y0+startScreen.gameMap.Tileset.TileHeight
-
 			// Coordinates of sprite destination
 			ix0 := (i % int(v.gameMap.Width)) * tileset.TileWidth
 			iy0 := (i / int(v.gameMap.Width)) * tileset.TileHeight
@@ -98,7 +93,7 @@ func (v *VillageScene) Draw(renderer *sdl.Renderer) {
 			scaledXPos := float64(ix0) * safeScale
 			scaledYPos := float64(iy0) * safeScale
 
-			src := sdl.Rect{int32(x0), int32(y0), 16, 16}
+			src := tileset.GetTileRectSliceFromTilesetByID(id)
 			dst := sdl.Rect{int32(scaledXPos), int32(scaledYPos), int32(16 * safeScale), int32(16 * safeScale)}
 			renderer.Copy(v.gameMap.Tileset.Texture, &src, &dst)
 		}
