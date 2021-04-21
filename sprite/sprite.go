@@ -18,9 +18,8 @@ type TilesetTilesAWSD struct {
 
 type SpriteManager struct {
 	CurrentTileId int32
-	TimeAppliedLastFrame time.Time
+	LastTimeFrameRotated time.Time
 	LastTileId int32
-	LastFrameTimeDuration int32 // the time the tile should stay until next tile frame
 	shouldAnimate bool
 	currentFrame int32
 }
@@ -41,15 +40,34 @@ func (s *SpriteManager) GetRectSprite(shouldAnimate bool, tile *tiled.TilesetTil
 	var rect sdl.Rect
 	frames := tile.Animation
 	if shouldAnimate {
-		rect = sdl.Rect{X: 96, Y: 32, W: 16, H: 32}
+		elapsed := time.Since(s.LastTimeFrameRotated).Milliseconds()
+		if s.LastTileId == tile.ID {
+			// walking hero keep walking same direction, lets animate the framess
+			if elapsed > int64(frames[s.currentFrame].Duration){
+				if int(s.currentFrame) < len(frames)-1{
+				// change the frame only if frame duration was respected
+					s.currentFrame += 1
+					s.LastTimeFrameRotated = time.Now()
+				}else{
+					s.currentFrame = 0
+				}
+			}
+			rect = tileset.GetTileRectSliceFromTilesetByID(frames[s.currentFrame].TileID)
+		}else{
+			// walking hero is changing direction, lets just render the first frame, next will run in condition above
+			s.LastTileId = tile.ID
+			s.currentFrame = 0
+			s.LastTimeFrameRotated = time.Now()
+			rect = tileset.GetTileRectSliceFromTilesetByID(frames[s.currentFrame].TileID)
+		}
 	}else{
 		s.LastTileId = tile.ID
-		s.TimeAppliedLastFrame = time.Now()
 		s.currentFrame = 0
 
 		if tile.ID == 34{
 			fmt.Println("b")
 		}
+		s.LastTimeFrameRotated = time.Now()
 		rect = tileset.GetTileRectSliceFromTilesetByID(frames[0].TileID)
 	}
 	return rect
