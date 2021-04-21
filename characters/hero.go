@@ -29,7 +29,7 @@ type Hero struct {
 	DrawAfterLayer             uint8
 	tileset                    tiled.Tileset
 	MoveKeyPressed             bool
-	TileKeys   sprite.TileAnimationKeys
+	TilesetTiles   sprite.TilesetTilesAWSD
 	lastAnimationFrameRotation int32
 	SpriteManager sprite.SpriteManager
 }
@@ -62,13 +62,13 @@ func (h *Hero) getHeroRectangleForSpriteRender() sdl.Rect {
 	// Either for rendering animation of hero staying still
 	var spriteRectCut sdl.Rect
 	if h.SpriteOrientation == "up" {
-		spriteRectCut = h.SpriteManager.GetRectSprite(h.MoveKeyPressed, h.TileKeys.Up, h.tileset)
+		spriteRectCut = h.SpriteManager.GetRectSprite(h.MoveKeyPressed, h.TilesetTiles.Up, h.tileset)
 	} else if h.SpriteOrientation == "down" {
-		spriteRectCut = h.SpriteManager.GetRectSprite(h.MoveKeyPressed, h.TileKeys.Down, h.tileset)
+		spriteRectCut = h.SpriteManager.GetRectSprite(h.MoveKeyPressed, h.TilesetTiles.Down, h.tileset)
 	} else if h.SpriteOrientation == "left" {
-		spriteRectCut = h.SpriteManager.GetRectSprite(h.MoveKeyPressed, h.TileKeys.Left, h.tileset)
+		spriteRectCut = h.SpriteManager.GetRectSprite(h.MoveKeyPressed, h.TilesetTiles.Left, h.tileset)
 	} else if h.SpriteOrientation == "right" {
-		spriteRectCut = h.SpriteManager.GetRectSprite(h.MoveKeyPressed, h.TileKeys.Right, h.tileset)
+		spriteRectCut = h.SpriteManager.GetRectSprite(h.MoveKeyPressed, h.TilesetTiles.Right, h.tileset)
 	} else {
 		fmt.Println("Unexpected orientation")
 		os.Exit(2)
