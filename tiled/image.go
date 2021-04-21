@@ -21,9 +21,9 @@ type Image struct {
 // AnimationFrame is single frame of animation
 type AnimationFrame struct {
 	// The local ID of a tile within the parent tileset.
-	TileID uint32 `xml:"tileid,attr"`
+	TileID int32 `xml:"tileid,attr"`
 	// How long (in milliseconds) this frame should be displayed before advancing to the next frame.
-	Duration uint32 `xml:"duration,attr"`
+	Duration int32 `xml:"duration,attr"`
 }
 
 // Properties wraps any number of custom properties

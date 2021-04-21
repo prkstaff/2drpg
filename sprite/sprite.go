@@ -2,6 +2,7 @@ package sprite
 
 import (
 	"errors"
+	"fmt"
 	"github.com/prkstaff/2drpg/tiled"
 	"github.com/veandco/go-sdl2/sdl"
 	"time"
@@ -9,10 +10,10 @@ import (
 
 // TileAnimationKeys the animation tile ids from spritesheet tileset
 type TilesetTilesAWSD struct {
-	Up tiled.TilesetTile
-	Down tiled.TilesetTile
-	Left tiled.TilesetTile
-	Right tiled.TilesetTile
+	Up *tiled.TilesetTile
+	Down *tiled.TilesetTile
+	Left *tiled.TilesetTile
+	Right *tiled.TilesetTile
 }
 
 type SpriteManager struct {
@@ -33,23 +34,23 @@ func GetTilesetTileByID(tileID int32, tileset tiled.Tileset) (*tiled.TilesetTile
 	return nil, errors.New("not found tileid in tile")
 }
 
-func (s *SpriteManager) GetRectSprite(shouldAnimate bool, tile tiled.TilesetTile, tileset tiled.Tileset) sdl.Rect{
+func (s *SpriteManager) GetRectSprite(shouldAnimate bool, tile *tiled.TilesetTile, tileset tiled.Tileset) sdl.Rect{
 	// tiled produces a tileset tsx file
 	// the tileID is the Tile Id that have an animation and is the first Tile Frame ID
 	// should animate will say if it should rotate between the frames or stay with the first tile still.
 	var rect sdl.Rect
+	frames := tile.Animation
 	if shouldAnimate {
-		if tile.ID == s.LastTileId{
-
-		}else{
-			s.LastTileId = tile.ID
-		}
 		rect = sdl.Rect{X: 96, Y: 32, W: 16, H: 32}
 	}else{
 		s.LastTileId = tile.ID
 		s.TimeAppliedLastFrame = time.Now()
 		s.currentFrame = 0
-		rect = tileset.GetTileRectSliceFromTilesetByID(tile.ID)
+
+		if tile.ID == 34{
+			fmt.Println("b")
+		}
+		rect = tileset.GetTileRectSliceFromTilesetByID(frames[0].TileID)
 	}
 	return rect
 }

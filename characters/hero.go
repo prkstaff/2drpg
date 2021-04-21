@@ -41,6 +41,23 @@ func (h *Hero) Load(renderer *sdl.Renderer) {
 func (h *Hero) LoadTileset() {
 	h.tileset = tiled.Tileset{Source: "heroSpriteSheet.tsx"}
 	h.tileset.LoadDataFromTSXFile()
+	var err error
+	h.TilesetTiles.Up, err = sprite.GetTilesetTileByID(34, h.tileset)
+	if err != nil {
+		fmt.Println("failed getting tileset tile for up")
+	}
+	h.TilesetTiles.Down, err = sprite.GetTilesetTileByID(0, h.tileset)
+	if err != nil {
+		fmt.Println("failed getting tileset tile for down")
+	}
+	h.TilesetTiles.Left, err = sprite.GetTilesetTileByID(51, h.tileset)
+	if err != nil {
+		fmt.Println("failed getting tileset tile for left")
+	}
+	h.TilesetTiles.Right, err = sprite.GetTilesetTileByID(17, h.tileset)
+	if err != nil {
+		fmt.Println("failed getting tileset tile for right")
+	}
 }
 
 func (h *Hero) LoadSpriteIMG(renderer *sdl.Renderer) {
