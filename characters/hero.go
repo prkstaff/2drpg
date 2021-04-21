@@ -31,6 +31,7 @@ type Hero struct {
 	MoveKeyPressed             bool
 	TileKeys   sprite.TileAnimationKeys
 	lastAnimationFrameRotation int32
+	SpriteManager sprite.SpriteManager
 }
 
 func (h *Hero) Load(renderer *sdl.Renderer) {
@@ -60,22 +61,17 @@ func (h *Hero) getHeroRectangleForSpriteRender() sdl.Rect {
 	// return the rectangle for slice the spritesheet
 	// Either for rendering animation of hero staying still
 	var spriteRectCut sdl.Rect
-	if h.MoveKeyPressed {
-		spriteRectCut = sdl.Rect{X: 96, Y: 32, W: 16, H: 32}
-		// animate with frame rotation
+	if h.SpriteOrientation == "up" {
+		spriteRectCut = h.SpriteManager.GetRectSprite(h.MoveKeyPressed, h.TileKeys.Up, h.tileset)
+	} else if h.SpriteOrientation == "down" {
+		spriteRectCut = h.SpriteManager.GetRectSprite(h.MoveKeyPressed, h.TileKeys.Down, h.tileset)
+	} else if h.SpriteOrientation == "left" {
+		spriteRectCut = h.SpriteManager.GetRectSprite(h.MoveKeyPressed, h.TileKeys.Left, h.tileset)
+	} else if h.SpriteOrientation == "right" {
+		spriteRectCut = h.SpriteManager.GetRectSprite(h.MoveKeyPressed, h.TileKeys.Right, h.tileset)
 	} else {
-		if h.SpriteOrientation == "up" {
-			spriteRectCut = h.tileset.GetTileRectSliceFromTilesetByID(h.TileKeys.Up)
-		} else if h.SpriteOrientation == "down" {
-			spriteRectCut = h.tileset.GetTileRectSliceFromTilesetByID(h.TileKeys.Down)
-		} else if h.SpriteOrientation == "left" {
-			spriteRectCut = h.tileset.GetTileRectSliceFromTilesetByID(h.TileKeys.Left)
-		} else if h.SpriteOrientation == "right" {
-			spriteRectCut = h.tileset.GetTileRectSliceFromTilesetByID(h.TileKeys.Right)
-		} else {
-			fmt.Println("Unexpected orientation")
-			os.Exit(2)
-		}
+		fmt.Println("Unexpected orientation")
+		os.Exit(2)
 	}
 	return spriteRectCut
 }
