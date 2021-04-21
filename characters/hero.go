@@ -57,10 +57,6 @@ func (h *Hero) LoadSpriteIMG(renderer *sdl.Renderer) {
 	}
 }
 func (h *Hero) getHeroRectangleForSpriteRender() sdl.Rect {
-	upRec := sdl.Rect{X: 0, Y: 64, W: 16, H: 32}
-	downRec := sdl.Rect{X: 0, Y: 0, W: 16, H: 32}
-	leftRec := sdl.Rect{X: 0, Y: 96, W: 16, H: 32}
-	rightRec := sdl.Rect{X: 0, Y: 32, W: 16, H: 32}
 	// return the rectangle for slice the spritesheet
 	// Either for rendering animation of hero staying still
 	var spriteRectCut sdl.Rect
@@ -69,13 +65,13 @@ func (h *Hero) getHeroRectangleForSpriteRender() sdl.Rect {
 		// animate with frame rotation
 	} else {
 		if h.SpriteOrientation == "up" {
-			spriteRectCut = upRec
+			spriteRectCut = h.tileset.GetTileRectSliceFromTilesetByID(h.TileKeys.Up)
 		} else if h.SpriteOrientation == "down" {
-			spriteRectCut = downRec
+			spriteRectCut = h.tileset.GetTileRectSliceFromTilesetByID(h.TileKeys.Down)
 		} else if h.SpriteOrientation == "left" {
-			spriteRectCut = leftRec
+			spriteRectCut = h.tileset.GetTileRectSliceFromTilesetByID(h.TileKeys.Left)
 		} else if h.SpriteOrientation == "right" {
-			spriteRectCut = rightRec
+			spriteRectCut = h.tileset.GetTileRectSliceFromTilesetByID(h.TileKeys.Right)
 		} else {
 			fmt.Println("Unexpected orientation")
 			os.Exit(2)
@@ -84,16 +80,9 @@ func (h *Hero) getHeroRectangleForSpriteRender() sdl.Rect {
 	return spriteRectCut
 }
 func (h *Hero) Draw(renderer *sdl.Renderer, scale int32) {
-
 	spriteRectCut := h.getHeroRectangleForSpriteRender()
 	dst := sdl.Rect{X: int32(h.XPos) * scale, Y: int32(h.YPos) * scale, W: 16 * scale, H: 32 * scale}
 	renderer.Copy(h.Texture, &spriteRectCut, &dst)
-	if h.AnimationFrame <= 3 {
-		h.AnimationFrame += 16
-	} else {
-		h.AnimationFrame = 0
-	}
-	h.AnimationFrame += 1
 }
 
 func (h *Hero) MoveUp() {

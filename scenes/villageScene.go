@@ -132,7 +132,7 @@ func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		DrawAfterLayer: 3,
 		AnimationFrame: 0,
 		SpriteOrientation: "down",
-		TileKeys: sprite.TileAnimationKeys{Up:32,Down: 0,Left: 51,Right: 17},
+		TileKeys: sprite.TileAnimationKeys{Up:34,Down: 0,Left: 51,Right: 17},
 	}
 	hero.Load(renderer)
 	v.characters = append(v.characters, &hero)

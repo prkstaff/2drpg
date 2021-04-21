@@ -18,7 +18,7 @@ type Data struct {
 	// RawData string `xml:",innerxml"`
 }
 
-func (d *Data) DecodeCSVTileData() ([]uint16, error) {
+func (d *Data) DecodeCSVTileData() ([]int32, error) {
 	// remove return character
 	cleanedTileString := strings.ReplaceAll(string(d.RawData), "\r", "")
 	// remove newline character
@@ -26,7 +26,7 @@ func (d *Data) DecodeCSVTileData() ([]uint16, error) {
 	// split comma character of csv
 	tiles := strings.Split(cleanedTileString, ",")
 	// convert list of strings to uint16 and return
-	tileSlice := make([]uint16, len(tiles))
+	tileSlice := make([]int32, len(tiles))
 	for i, value := range tiles {
 		var id uint64
 		var err error
@@ -34,7 +34,7 @@ func (d *Data) DecodeCSVTileData() ([]uint16, error) {
 		if err != nil {
 			return nil, err
 		}
-		tileSlice[i] = uint16(id)
+		tileSlice[i] = int32(id)
 	}
 	return tileSlice, nil
 }

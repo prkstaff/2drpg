@@ -117,10 +117,10 @@ func (t *Tileset) LoadTileSetTexture(renderer *sdl.Renderer) {
 		os.Exit(2)
 	}
 }
-func (t *Tileset) GetTileRectSliceFromTilesetByID(id uint16) sdl.Rect {
+func (t *Tileset) GetTileRectSliceFromTilesetByID(id int32) sdl.Rect {
 	// Coordinates of sprite slice
 	x0 := (int(id) % t.Columns) * t.TileWidth
 	y0 := (int(id) / t.Columns) * t.TileHeight
-	src := sdl.Rect{int32(x0), int32(y0), 16, 16}
+	src := sdl.Rect{int32(x0), int32(y0), int32(t.TileWidth), int32(t.TileHeight)}
 	return src
 }
