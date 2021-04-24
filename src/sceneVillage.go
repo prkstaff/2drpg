@@ -94,7 +94,11 @@ func (v *VillageScene) Draw(renderer *sdl.Renderer) {
 
 			src := tileset.GetTileRectSliceFromTilesetByID(id)
 			dst := sdl.Rect{int32(scaledXPos), int32(scaledYPos), int32(16 * safeScale), int32(16 * safeScale)}
-			renderer.Copy(v.gameMap.Tileset.Texture, &src, &dst)
+			err := renderer.Copy(v.gameMap.Tileset.Texture, &src, &dst)
+			if err != nil {
+				fmt.Println(err)
+				os.Exit(2)
+			}
 		}
 		// Draw Characters
 		for _, obj := range v.characters {
@@ -106,7 +110,6 @@ func (v *VillageScene) Draw(renderer *sdl.Renderer) {
 }
 
 func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
-	fmt.Println("Called")
 	v.inputHandler = InputHandler{}
 	var loadMapTMXErr error
 	v.gameMap, loadMapTMXErr = ReadTMX("assets/maps/main.tmx")

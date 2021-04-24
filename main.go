@@ -80,7 +80,11 @@ func (g *Game) Draw() {
 	// fazer um blog post
 	// https://stackoverflow.com/questions/21007329/what-is-an-sdl-renderer
 
-	g.renderer.Clear()
+	err := g.renderer.Clear()
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(2)
+	}
 	g.scenes[g.currentScene].Draw(g.renderer)
 	g.renderer.Present()
 	sdl.Delay(16)
