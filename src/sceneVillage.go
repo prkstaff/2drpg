@@ -23,6 +23,7 @@ type VillageScene struct {
 	initialHeroPosX uint16
 	initialHeroPosY uint16
 	inputHandler    InputHandler
+	tilesetLayers [][]int32
 }
 
 func (v *VillageScene) Update(keyStates []uint8) {
@@ -31,22 +32,22 @@ func (v *VillageScene) Update(keyStates []uint8) {
 	v.inputHandler.Commands = nil
 	var anyKeyMovePressed bool
 	// quando uma tecla é solta e a outra mantém pressionada, se perde a que estava pressionada.
-	if keyStates[sdl.SCANCODE_W] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset("up"){
+	if keyStates[sdl.SCANCODE_W] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset(hero, "up"){
 		anyKeyMovePressed = true
 		mvUp := MoveUpCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvUp)
 	}
-	if keyStates[sdl.SCANCODE_S] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset("down"){
+	if keyStates[sdl.SCANCODE_S] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset(hero, "down"){
 		anyKeyMovePressed = true
 		mvDw := MoveDownCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvDw)
 	}
-	if keyStates[sdl.SCANCODE_A] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset("left"){
+	if keyStates[sdl.SCANCODE_A] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset(hero, "left"){
 		anyKeyMovePressed = true
 		mvLf := MoveLeftCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvLf)
 	}
-	if keyStates[sdl.SCANCODE_D] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset("right"){
+	if keyStates[sdl.SCANCODE_D] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset(hero, "right"){
 		anyKeyMovePressed = true
 		mvRg := MoveRightCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvRg)
@@ -78,14 +79,9 @@ func (v *VillageScene) Draw(renderer *sdl.Renderer) {
 	}
 	safeScale += 1
 
-	for _, l := range v.gameMap.Layers {
-		layerTilesIDSlice, err := l.Data.DecodeCSVTileData()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(2)
-		}
+	for lId, l := range v.tilesetLayers {
 		// Draw tiles
-		for i, id := range layerTilesIDSlice {
+		for i, id := range l {
 			id -= 1
 
 			// Coordinates of sprite destination
@@ -102,7 +98,7 @@ func (v *VillageScene) Draw(renderer *sdl.Renderer) {
 		}
 		// Draw Characters
 		for _, obj := range v.characters {
-			if uint32(obj.DrawAfterLayer) == l.ID {
+			if int(obj.DrawAfterLayer) == lId {
 				obj.Draw(renderer, int32(safeScale))
 			}
 		}
@@ -118,6 +114,16 @@ func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 	if err2 != nil {
 		fmt.Println(err2)
 		os.Exit(2)
+	}
+
+	//Decode Tileset Layers
+	for _, l := range v.gameMap.Layers {
+		layerTilesIDSlice, err := l.Data.DecodeCSVTileData()
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(2)
+		}
+		v.tilesetLayers = append(v.tilesetLayers, layerTilesIDSlice)
 	}
 
 	startPosObj, startPosObjErr := v.gameMap.Objects.GetObjectByName("StartPos")
