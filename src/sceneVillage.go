@@ -24,6 +24,7 @@ type VillageScene struct {
 	initialHeroPosY uint16
 	inputHandler    InputHandler
 	tilesetLayers [][]int32
+	CollisionBoxes []*Object
 }
 
 func (v *VillageScene) Update(keyStates []uint8) {
@@ -118,6 +119,16 @@ func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		fmt.Println(err2)
 		os.Exit(2)
 	}
+	// get all the collision boxes
+	for _, tile := range v.gameMap.Tileset.Tiles {
+		if len(tile.ObjectGroups) > 0{
+			for _, objGr := range tile.ObjectGroups{
+				for _, collisionBox := range objGr.Objects{
+					v.CollisionBoxes = append(v.CollisionBoxes, collisionBox)
+				}
+			}
+		}
+	}
 
 	//Decode Tileset Layers
 	for _, l := range v.gameMap.Layers {
@@ -128,6 +139,7 @@ func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		}
 		v.tilesetLayers = append(v.tilesetLayers, layerTilesIDSlice)
 	}
+
 
 	startPosObj, startPosObjErr := v.gameMap.Objects.GetObjectByName("StartPos")
 	if startPosObjErr != nil {

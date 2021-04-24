@@ -117,11 +117,9 @@ func (t *Tileset) LoadTileSetTexture(renderer *sdl.Renderer) {
 		os.Exit(2)
 	}
 }
-func (t Tileset) getTilesetThatTheActorIsTouching(actor Actor)  {
-}
 func (t *Tileset) HeroDontColideAgainsTileset(actor Actor,orientation string) bool{
 	if orientation == "up"{
-		t.getTilesetThatTheActorIsTouching(actor)
+		fmt.Println("Checking collision for up")
 	}else if orientation == "down"{
 		fmt.Println("Checking collision for down")
 	}else if orientation == "left"{
