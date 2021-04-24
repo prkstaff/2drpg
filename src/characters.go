@@ -1,11 +1,9 @@
-package characters
+package src
 
 import (
 	"fmt"
-	"github.com/prkstaff/2drpg/sprite"
 	"os"
 
-	"github.com/prkstaff/2drpg/tiled"
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -27,11 +25,11 @@ type Hero struct {
 	XPos                       uint16
 	YPos                       uint16
 	DrawAfterLayer             uint8
-	tileset                    tiled.Tileset
+	tileset                    Tileset
 	MoveKeyPressed             bool
-	TilesetTiles   sprite.TilesetTilesAWSD
+	TilesetTiles               TilesetTilesAWSD
 	lastAnimationFrameRotation int32
-	SpriteManager sprite.SpriteManager
+	SpriteManager              SpriteManager
 }
 
 func (h *Hero) Load(renderer *sdl.Renderer) {
@@ -39,22 +37,22 @@ func (h *Hero) Load(renderer *sdl.Renderer) {
 	h.LoadTileset()
 }
 func (h *Hero) LoadTileset() {
-	h.tileset = tiled.Tileset{Source: "heroSpriteSheet.tsx"}
+	h.tileset = Tileset{Source: "heroSpriteSheet.tsx"}
 	h.tileset.LoadDataFromTSXFile()
 	var err error
-	h.TilesetTiles.Up, err = sprite.GetTilesetTileByID(34, h.tileset)
+	h.TilesetTiles.Up, err = GetTilesetTileByID(34, h.tileset)
 	if err != nil {
 		fmt.Println("failed getting tileset tile for up")
 	}
-	h.TilesetTiles.Down, err = sprite.GetTilesetTileByID(0, h.tileset)
+	h.TilesetTiles.Down, err = GetTilesetTileByID(0, h.tileset)
 	if err != nil {
 		fmt.Println("failed getting tileset tile for down")
 	}
-	h.TilesetTiles.Left, err = sprite.GetTilesetTileByID(51, h.tileset)
+	h.TilesetTiles.Left, err = GetTilesetTileByID(51, h.tileset)
 	if err != nil {
 		fmt.Println("failed getting tileset tile for left")
 	}
-	h.TilesetTiles.Right, err = sprite.GetTilesetTileByID(17, h.tileset)
+	h.TilesetTiles.Right, err = GetTilesetTileByID(17, h.tileset)
 	if err != nil {
 		fmt.Println("failed getting tileset tile for right")
 	}

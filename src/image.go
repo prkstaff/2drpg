@@ -1,4 +1,4 @@
-package tiled
+package src
 
 import (
 	"encoding/xml"

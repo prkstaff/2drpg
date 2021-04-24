@@ -1,18 +1,17 @@
-package sprite
+package src
 
 import (
 	"errors"
-	"github.com/prkstaff/2drpg/tiled"
 	"github.com/veandco/go-sdl2/sdl"
 	"time"
 )
 
 // TileAnimationKeys the animation tile ids from spritesheet tileset
 type TilesetTilesAWSD struct {
-	Up *tiled.TilesetTile
-	Down *tiled.TilesetTile
-	Left *tiled.TilesetTile
-	Right *tiled.TilesetTile
+	Up *TilesetTile
+	Down *TilesetTile
+	Left *TilesetTile
+	Right *TilesetTile
 }
 
 type SpriteManager struct {
@@ -23,7 +22,7 @@ type SpriteManager struct {
 	currentFrame int32
 }
 
-func GetTilesetTileByID(tileID int32, tileset tiled.Tileset) (*tiled.TilesetTile, error) {
+func GetTilesetTileByID(tileID int32, tileset Tileset) (*TilesetTile, error) {
 	for _, tile := range tileset.Tiles{
 		if tile.ID == tileID{
 			return tile, nil
@@ -32,7 +31,7 @@ func GetTilesetTileByID(tileID int32, tileset tiled.Tileset) (*tiled.TilesetTile
 	return nil, errors.New("not found tileid in tile")
 }
 
-func (s *SpriteManager) GetRectSprite(shouldAnimate bool, tile *tiled.TilesetTile, tileset tiled.Tileset) sdl.Rect{
+func (s *SpriteManager) GetRectSprite(shouldAnimate bool, tile *TilesetTile, tileset Tileset) sdl.Rect{
 	// tiled produces a tileset tsx file
 	// the tileID is the Tile Id that have an animation and is the first Tile Frame ID
 	// should animate will say if it should rotate between the frames or stay with the first tile still.

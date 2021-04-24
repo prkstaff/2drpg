@@ -1,4 +1,4 @@
-package tiled
+package src
 
 import (
 	"encoding/xml"
@@ -90,7 +90,7 @@ func (o *ObjectGroup) GetObjectByName(name string) (*Object, error){
 
 
 type Map struct {
-	Width        uint16       `xml:"width,attr"`      // Number of tiles Width
+	Width        uint16        `xml:"width,attr"`      // Number of tiles Width
 	Height       uint16       `xml:"height,attr"`     // Number of tiles Height
 	TileWidth    uint16       `xml:"tilewidth,attr"`  // Tile Width size in pixels
 	TileHeight   uint16       `xml:"tileheight,attr"` // Tile Height size in pixels

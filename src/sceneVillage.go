@@ -7,10 +7,7 @@ import (
 	"math"
 	"os"
 
-	"github.com/prkstaff/2drpg/characters"
-	"github.com/prkstaff/2drpg/input"
 	"github.com/prkstaff/2drpg/settings"
-	"github.com/prkstaff/2drpg/tiled"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -21,12 +18,12 @@ type Scene interface {
 }
 
 type VillageScene struct {
-	gameMap         *tiled.Map
+	gameMap         *Map
 	EmbeddedFS      *embed.FS
-	characters      []*characters.Hero
+	characters      []*Hero
 	initialHeroPosX uint16
 	initialHeroPosY uint16
-	inputHandler    input.InputHandler
+	inputHandler    InputHandler
 }
 
 func (v *VillageScene) Update(keyStates []uint8) {
@@ -37,22 +34,22 @@ func (v *VillageScene) Update(keyStates []uint8) {
 	// quando uma tecla é solta e a outra mantém pressionada, se perde a que estava pressionada.
 	if keyStates[sdl.SCANCODE_W] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset("up"){
 		anyKeyMovePressed = true
-		mvUp := input.MoveUpCommand{}
+		mvUp := MoveUpCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvUp)
 	}
 	if keyStates[sdl.SCANCODE_S] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset("down"){
 		anyKeyMovePressed = true
-		mvDw := input.MoveDownCommand{}
+		mvDw := MoveDownCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvDw)
 	}
 	if keyStates[sdl.SCANCODE_A] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset("left"){
 		anyKeyMovePressed = true
-		mvLf := input.MoveLeftCommand{}
+		mvLf := MoveLeftCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvLf)
 	}
 	if keyStates[sdl.SCANCODE_D] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset("right"){
 		anyKeyMovePressed = true
-		mvRg := input.MoveRightCommand{}
+		mvRg := MoveRightCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvRg)
 	}
 	v.inputHandler.HandleInput(hero)
@@ -115,9 +112,9 @@ func (v *VillageScene) Draw(renderer *sdl.Renderer) {
 
 func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 	fmt.Println("Called")
-	v.inputHandler = input.InputHandler{}
+	v.inputHandler = InputHandler{}
 	var loadMapTMXErr error
-	v.gameMap, loadMapTMXErr = tiled.ReadTMX("assets/maps/main.tmx")
+	v.gameMap, loadMapTMXErr = ReadTMX("assets/maps/main.tmx")
 	_, err2 := v.gameMap.Tileset.LoadDataFromTSXFile()
 	if err2 != nil {
 		fmt.Println(err2)
@@ -129,7 +126,7 @@ func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		log.Print(startPosObjErr)
 		os.Exit(2)
 	}
-	hero := characters.Hero{
+	hero := Hero{
 		SpritePath:     "assets/tilesets/character.png",
 		Texture:        nil,
 		SpriteWidth:    16,
