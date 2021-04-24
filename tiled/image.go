@@ -117,6 +117,23 @@ func (t *Tileset) LoadTileSetTexture(renderer *sdl.Renderer) {
 		os.Exit(2)
 	}
 }
+
+func (t *Tileset) HeroDontColideAgainsTileset(orientation string) bool{
+	if orientation == "up"{
+		fmt.Println("Checking collision for up")
+	}else if orientation == "down"{
+		fmt.Println("Checking collision for down")
+	}else if orientation == "left"{
+		fmt.Println("Checking collision for left")
+	}else if orientation == "right"{
+		fmt.Println("Checking collision for right")
+	}else{
+		fmt.Println("Unrecognized orientation")
+		os.Exit(2)
+	}
+	return true
+}
+
 func (t *Tileset) GetTileRectSliceFromTilesetByID(id int32) sdl.Rect {
 	// Coordinates of sprite slice
 	x0 := (int(id) % t.Columns) * t.TileWidth

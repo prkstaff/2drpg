@@ -55,31 +55,31 @@
  </tile>
  <tile id="645">
   <objectgroup draworder="index" id="3">
-   <object id="2" x="0.109602" y="14.0655">
-    <polygon points="0,0 0.876812,-5.04167 3.68992,-9.6084 6.9049,-12.0562 12.7868,-14.029 15.8192,-14.029 15.8557,1.82669 -0.0730677,1.86323"/>
-   </object>
-   <object id="3" x="0" y="0" width="16" height="16"/>
+   <object id="4" x="5.63636" y="2.66061" width="10.3485" height="13.2982"/>
+   <object id="5" x="0" y="8.72727" width="5.64949" height="7.23153"/>
+   <object id="8" x="2.27273" y="4.81818" width="3.34343" height="3.90909"/>
+   <object id="9" x="7.54545" y="0.727273" width="8.42677" height="1.90909"/>
   </objectgroup>
  </tile>
  <tile id="646">
   <objectgroup draworder="index" id="3">
-   <object id="2" x="0.0365339" y="0.0365339">
-    <polygon points="0,0 2.95924,-0.0365339 8.95079,1.93629 14.9423,7.89131 15.0154,8.95079 14.9789,13.9194 15.8922,13.9194 15.8922,15.8922 0,15.8557"/>
-   </object>
+   <object id="3" x="-0.00763889" y="0" width="7.00764" height="16"/>
+   <object id="4" x="7" y="2.03125" width="4.03125" height="13.9375"/>
+   <object id="5" x="11.0313" y="4.96875" width="4.96875" height="11"/>
   </objectgroup>
  </tile>
  <tile id="685">
   <objectgroup draworder="index" id="2">
-   <object id="1" x="0.109602" y="0.0730677">
-    <polygon points="0,0 15.8557,0 15.8557,11.0332 14.4309,14.029 5.95502,13.8829 0.913346,6.86836"/>
-   </object>
+   <object id="2" x="0.03125" y="-0.03125" width="15.9688" height="8.125"/>
+   <object id="3" x="2.9375" y="8.0625" width="13.0625" height="4.9375"/>
+   <object id="4" x="5.125" y="12.9375" width="10.9063" height="1.125"/>
   </objectgroup>
  </tile>
  <tile id="686">
   <objectgroup draworder="index" id="2">
-   <object id="1" x="15.9653" y="0.0730677">
-    <polygon points="0,0 0.0365339,7.92785 -3.32458,15.8557 -13.0061,15.8922 -15.9653,12.4215 -15.9288,0"/>
-   </object>
+   <object id="2" x="0.03125" y="0" width="11.875" height="14.9375"/>
+   <object id="4" x="11.9063" y="0.03125" width="2.09375" height="11.9063"/>
+   <object id="5" x="14.0625" y="0.09375" width="1.9375" height="6.90625"/>
   </objectgroup>
  </tile>
 </tileset>

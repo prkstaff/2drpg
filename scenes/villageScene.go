@@ -14,6 +14,12 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+type Scene interface {
+	OnLoad(renderer *sdl.Renderer)
+	Update(keyStates []uint8)
+	Draw(renderer *sdl.Renderer)
+}
+
 type VillageScene struct {
 	gameMap         *tiled.Map
 	EmbeddedFS      *embed.FS
@@ -24,29 +30,31 @@ type VillageScene struct {
 }
 
 func (v *VillageScene) Update(keyStates []uint8) {
+	hero := v.characters[0]
+
 	v.inputHandler.Commands = nil
 	var anyKeyMovePressed bool
-	if keyStates[sdl.SCANCODE_W] == 1 {
+	// quando uma tecla é solta e a outra mantém pressionada, se perde a que estava pressionada.
+	if keyStates[sdl.SCANCODE_W] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset("up"){
 		anyKeyMovePressed = true
 		mvUp := input.MoveUpCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvUp)
 	}
-	if keyStates[sdl.SCANCODE_S] == 1 {
+	if keyStates[sdl.SCANCODE_S] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset("down"){
 		anyKeyMovePressed = true
 		mvDw := input.MoveDownCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvDw)
 	}
-	if keyStates[sdl.SCANCODE_A] == 1 {
+	if keyStates[sdl.SCANCODE_A] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset("left"){
 		anyKeyMovePressed = true
 		mvLf := input.MoveLeftCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvLf)
 	}
-	if keyStates[sdl.SCANCODE_D] == 1 {
+	if keyStates[sdl.SCANCODE_D] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset("right"){
 		anyKeyMovePressed = true
 		mvRg := input.MoveRightCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvRg)
 	}
-	hero := v.characters[0]
 	v.inputHandler.HandleInput(hero)
 	if anyKeyMovePressed {
 		hero.MoveKeyPressed = true

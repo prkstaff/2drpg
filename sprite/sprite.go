@@ -2,7 +2,6 @@ package sprite
 
 import (
 	"errors"
-	"fmt"
 	"github.com/prkstaff/2drpg/tiled"
 	"github.com/veandco/go-sdl2/sdl"
 	"time"
@@ -64,9 +63,6 @@ func (s *SpriteManager) GetRectSprite(shouldAnimate bool, tile *tiled.TilesetTil
 		s.LastTileId = tile.ID
 		s.currentFrame = 0
 
-		if tile.ID == 34{
-			fmt.Println("b")
-		}
 		s.LastTimeFrameRotated = time.Now()
 		rect = tileset.GetTileRectSliceFromTilesetByID(frames[0].TileID)
 	}
