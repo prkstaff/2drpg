@@ -1,4 +1,4 @@
-package scenes
+package src
 
 import (
 	"embed"

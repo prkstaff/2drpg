@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/prkstaff/2drpg/scenes"
+	"github.com/prkstaff/2drpg/src"
 	"github.com/prkstaff/2drpg/settings"
 	"github.com/veandco/go-sdl2/sdl"
 )
@@ -16,7 +16,7 @@ var embeddedFS embed.FS
 
 // Game implements ebiten.Game interface.
 type Game struct {
-	scenes       map[string]scenes.Scene
+	scenes       map[string]src.Scene
 	currentScene string
 	Window       *sdl.Window
 	windowName   string
@@ -91,9 +91,9 @@ func main() {
 	game := Game{windowName: "Unstopable Fellowship"}
 
 	//start Screen
-	villageScene := scenes.VillageScene{}
+	villageScene := src.VillageScene{}
 	villageScene.EmbeddedFS = &embeddedFS
-	game.scenes = map[string]scenes.Scene{"village": &villageScene}
+	game.scenes = map[string]src.Scene{"village": &villageScene}
 
 	game.run()
 }
