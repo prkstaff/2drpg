@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/prkstaff/2drpg/src"
-	"github.com/prkstaff/2drpg/settings"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -34,7 +33,7 @@ func (g Game) run() {
 
 	var err error
 	g.Window, err = sdl.CreateWindow(g.windowName, sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
-		int32(settings.GameSettings().WindowWidth), int32(settings.GameSettings().WindowHeigh), sdl.WINDOW_SHOWN)
+		int32(src.GameSettings().WindowWidth), int32(src.GameSettings().WindowHeigh), sdl.WINDOW_SHOWN)
 	if err != nil {
 		panic(err)
 	}

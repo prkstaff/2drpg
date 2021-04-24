@@ -7,7 +7,6 @@ import (
 	"math"
 	"os"
 
-	"github.com/prkstaff/2drpg/settings"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
@@ -63,8 +62,8 @@ func (v *VillageScene) Update(keyStates []uint8) {
 func (v *VillageScene) Draw(renderer *sdl.Renderer) {
 	tileset := v.gameMap.Tileset
 	// Calculate draw scale
-	wWidth := settings.GameSettings().WindowWidth
-	wHeight := settings.GameSettings().WindowHeigh
+	wWidth := GameSettings().WindowWidth
+	wHeight := GameSettings().WindowHeigh
 	sx := float64(wWidth) / (float64(v.gameMap.Width) * float64(v.gameMap.TileWidth))
 	sy := float64(wHeight) / (float64(v.gameMap.Height) * float64(v.gameMap.TileHeight))
 
