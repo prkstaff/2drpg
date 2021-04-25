@@ -27,24 +27,31 @@ type VillageScene struct {
 	tilesetObjectGroups map[int32][]*ObjectGroup
 }
 
-func (v VillageScene) getTileIDByIndex(index int32) int32 {
+func (v VillageScene) getTileIDByIndex(index int32) []int32 {
 	// will return any tileset collision box in any layer
-	var tileID int32
+	var tileIDs []int32
 	for _, l := range v.tilesetLayers {
-		tileID = l[index]
+		tileIDs = append(tileIDs, l[index])
 	}
-	return tileID
+	return tileIDs
 }
 
-func (v VillageScene) getCollisionObjectGroupByTileIndex(index int32) []*ObjectGroup {
-	tileID := v.getTileIDByIndex(index)
-	return v.tilesetObjectGroups[tileID]
+func (v VillageScene) getCollisionObjectGroupByTileIndex(index int32) [][]*ObjectGroup {
+	tileIDs := v.getTileIDByIndex(index)
+	var objectGroups [][]*ObjectGroup
+	for _, tileID := range tileIDs{
+		objG, exists :=  v.tilesetObjectGroups[tileID]
+		if exists{
+			objectGroups = append(objectGroups, objG)
+		}
+	}
+	return objectGroups
 }
 
 func (v *VillageScene) HeroDontColideAgainsTileset(hero *Hero, orientation string) bool {
 	// first we get the x,y coordinates, based on x,y we get the current tile index
 	heroTileIndex := v.getCurrentHeroTileIndex()
-	fmt.Printf("Current hero index is %v\n", heroTileIndex)
+	//fmt.Printf("Current hero index is %v\n", heroTileIndex)
 	if orientation == "up" {
 		directUpperTileIndex := heroTileIndex - int32(v.gameMap.Width)
 		colisionObjectGroups := v.getCollisionObjectGroupByTileIndex(directUpperTileIndex)
@@ -166,8 +173,9 @@ func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		}
 		v.tilesetLayers = append(v.tilesetLayers, layerTilesIDSlice)
 	}
-	v.tilesetObjectGroups = make(map[int32][]*ObjectGroup)
+
 	// map tilseset collision objects by ID
+	v.tilesetObjectGroups = make(map[int32][]*ObjectGroup)
 	for _, tile := range v.gameMap.Tileset.Tiles{
 		if len(tile.ObjectGroups) > 0 {
 			v.tilesetObjectGroups[tile.ID] = tile.ObjectGroups
