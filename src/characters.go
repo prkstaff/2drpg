@@ -20,11 +20,11 @@ type Hero struct {
 	SpriteOrientation          string
 	AnimationFrame             int32 // 1 - 4
 	Texture                    *sdl.Texture
-	SpriteWidth                uint16
-	SpriteHeight               uint16
-	XPos                       uint16
-	YPos                       uint16
-	DrawAfterLayer             uint8
+	SpriteWidth                int32
+	SpriteHeight               int32
+	XPos                       int32
+	YPos                       int32
+	DrawAfterLayer             int32
 	tileset                    Tileset
 	MoveKeyPressed             bool
 	TilesetTiles               TilesetTilesAWSD

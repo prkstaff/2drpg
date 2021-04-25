@@ -20,8 +20,6 @@ type VillageScene struct {
 	gameMap         *Map
 	EmbeddedFS      *embed.FS
 	characters      []*Hero
-	initialHeroPosX uint16
-	initialHeroPosY uint16
 	inputHandler    InputHandler
 	tilesetLayers   [][]int32
 	tilesetObjectGroups map[int32][]*ObjectGroup
@@ -53,7 +51,7 @@ func (v *VillageScene) HeroDontColideAgainsTileset(hero *Hero, orientation strin
 	heroTileIndex := v.getCurrentHeroTileIndex()
 	//fmt.Printf("Current hero index is %v\n", heroTileIndex)
 	if orientation == "up" {
-		directUpperTileIndex := heroTileIndex - int32(v.gameMap.Width)
+		directUpperTileIndex := heroTileIndex - v.gameMap.Width
 		colisionObjectGroups := v.getCollisionObjectGroupByTileIndex(directUpperTileIndex)
 		if len(colisionObjectGroups) > 0 {
 			fmt.Println("collided")
@@ -192,8 +190,8 @@ func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		Texture:           nil,
 		SpriteWidth:       16,
 		SpriteHeight:      16,
-		XPos:              uint16(startPosObj.X),
-		YPos:              uint16(startPosObj.Y),
+		XPos:              int32(startPosObj.X),
+		YPos:              int32(startPosObj.Y),
 		DrawAfterLayer:    3,
 		AnimationFrame:    0,
 		SpriteOrientation: "down",
