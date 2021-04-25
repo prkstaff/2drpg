@@ -23,32 +23,69 @@ type VillageScene struct {
 	initialHeroPosX uint16
 	initialHeroPosY uint16
 	inputHandler    InputHandler
-	tilesetLayers [][]int32
-	CollisionBoxes []*Object
+	tilesetLayers   [][]int32
+	tilesetObjectGroups map[int32][]*ObjectGroup
 }
 
+func (v VillageScene) getTileIDByIndex(index int32) int32 {
+	// will return any tileset collision box in any layer
+	var tileID int32
+	for _, l := range v.tilesetLayers {
+		tileID = l[index]
+	}
+	return tileID
+}
+
+func (v VillageScene) getCollisionObjectGroupByTileIndex(index int32) []*ObjectGroup {
+	tileID := v.getTileIDByIndex(index)
+	return v.tilesetObjectGroups[tileID]
+}
+
+func (v *VillageScene) HeroDontColideAgainsTileset(hero *Hero, orientation string) bool {
+	// first we get the x,y coordinates, based on x,y we get the current tile index
+	heroTileIndex := v.getCurrentHeroTileIndex()
+	fmt.Printf("Current hero index is %v\n", heroTileIndex)
+	if orientation == "up" {
+		directUpperTileIndex := heroTileIndex - int32(v.gameMap.Width)
+		colisionObjectGroups := v.getCollisionObjectGroupByTileIndex(directUpperTileIndex)
+		if len(colisionObjectGroups) > 0 {
+			fmt.Println("collided")
+		}
+
+	}
+
+	// if the hero is is heading up we will check for the adjacent tiles in the upper row.
+	// if any of these tiles have collision box we will check for the collision
+	return true
+}
+func (v VillageScene) getCurrentHeroTileIndex() int32 {
+	hero := v.characters[0]
+	currentColum := math.Floor(float64(hero.XPos) / float64(v.gameMap.Tileset.TileWidth))
+	currentRow := math.Floor(float64(hero.YPos) / float64(v.gameMap.Tileset.TileHeight))
+	return int32(currentRow*float64(v.gameMap.Width) + currentColum)
+}
 func (v *VillageScene) Update(keyStates []uint8) {
 	hero := v.characters[0]
 
 	v.inputHandler.Commands = nil
 	var anyKeyMovePressed bool
 	// quando uma tecla é solta e a outra mantém pressionada, se perde a que estava pressionada.
-	if keyStates[sdl.SCANCODE_W] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset(hero, "up"){
+	if keyStates[sdl.SCANCODE_W] == 1 && v.HeroDontColideAgainsTileset(hero, "up") {
 		anyKeyMovePressed = true
 		mvUp := MoveUpCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvUp)
 	}
-	if keyStates[sdl.SCANCODE_S] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset(hero, "down"){
+	if keyStates[sdl.SCANCODE_S] == 1 && v.HeroDontColideAgainsTileset(hero, "down") {
 		anyKeyMovePressed = true
 		mvDw := MoveDownCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvDw)
 	}
-	if keyStates[sdl.SCANCODE_A] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset(hero, "left"){
+	if keyStates[sdl.SCANCODE_A] == 1 && v.HeroDontColideAgainsTileset(hero, "left") {
 		anyKeyMovePressed = true
 		mvLf := MoveLeftCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvLf)
 	}
-	if keyStates[sdl.SCANCODE_D] == 1 && v.gameMap.Tileset.HeroDontColideAgainsTileset(hero, "right"){
+	if keyStates[sdl.SCANCODE_D] == 1 && v.HeroDontColideAgainsTileset(hero, "right") {
 		anyKeyMovePressed = true
 		mvRg := MoveRightCommand{}
 		v.inputHandler.Commands = append(v.inputHandler.Commands, mvRg)
@@ -56,7 +93,7 @@ func (v *VillageScene) Update(keyStates []uint8) {
 	v.inputHandler.HandleInput(hero)
 	if anyKeyMovePressed {
 		hero.MoveKeyPressed = true
-	}else{
+	} else {
 		hero.MoveKeyPressed = false
 	}
 }
@@ -119,16 +156,6 @@ func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		fmt.Println(err2)
 		os.Exit(2)
 	}
-	// get all the collision boxes
-	for _, tile := range v.gameMap.Tileset.Tiles {
-		if len(tile.ObjectGroups) > 0{
-			for _, objGr := range tile.ObjectGroups{
-				for _, collisionBox := range objGr.Objects{
-					v.CollisionBoxes = append(v.CollisionBoxes, collisionBox)
-				}
-			}
-		}
-	}
 
 	//Decode Tileset Layers
 	for _, l := range v.gameMap.Layers {
@@ -139,7 +166,13 @@ func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		}
 		v.tilesetLayers = append(v.tilesetLayers, layerTilesIDSlice)
 	}
-
+	v.tilesetObjectGroups = make(map[int32][]*ObjectGroup)
+	// map tilseset collision objects by ID
+	for _, tile := range v.gameMap.Tileset.Tiles{
+		if len(tile.ObjectGroups) > 0 {
+			v.tilesetObjectGroups[tile.ID] = tile.ObjectGroups
+		}
+	}
 
 	startPosObj, startPosObjErr := v.gameMap.Objects.GetObjectByName("StartPos")
 	if startPosObjErr != nil {
@@ -147,14 +180,14 @@ func (v *VillageScene) OnLoad(renderer *sdl.Renderer) {
 		os.Exit(2)
 	}
 	hero := Hero{
-		SpritePath:     "assets/tilesets/character.png",
-		Texture:        nil,
-		SpriteWidth:    16,
-		SpriteHeight:   16,
-		XPos:           uint16(startPosObj.X),
-		YPos:           uint16(startPosObj.Y),
-		DrawAfterLayer: 3,
-		AnimationFrame: 0,
+		SpritePath:        "assets/tilesets/character.png",
+		Texture:           nil,
+		SpriteWidth:       16,
+		SpriteHeight:      16,
+		XPos:              uint16(startPosObj.X),
+		YPos:              uint16(startPosObj.Y),
+		DrawAfterLayer:    3,
+		AnimationFrame:    0,
 		SpriteOrientation: "down",
 	}
 	hero.Load(renderer)
