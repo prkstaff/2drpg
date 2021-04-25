@@ -34,16 +34,23 @@ func (v VillageScene) getTileIDByIndex(index int32) []int32 {
 	return tileIDs
 }
 
-func (v VillageScene) getCollisionObjectGroupByTileIndex(index int32) [][]*ObjectGroup {
-	tileIDs := v.getTileIDByIndex(index)
-	var objectGroups [][]*ObjectGroup
-	for _, tileID := range tileIDs{
-		objG, exists :=  v.tilesetObjectGroups[tileID]
-		if exists{
-			objectGroups = append(objectGroups, objG)
+func (v VillageScene) getCollisionObjectGroupByTileIndexes(indexes []int32) []*Object {
+	var objects []*Object
+	for _, index := range indexes {
+		// get every tileid from every layer
+		tileIDs := v.getTileIDByIndex(index)
+		for _, tileID := range tileIDs {
+			objGls, exists := v.tilesetObjectGroups[tileID]
+			if exists {
+				for _, objG := range objGls{
+					for _, obj := range objG.Objects{
+						objects = append(objects, obj)
+					}
+				}
+			}
 		}
 	}
-	return objectGroups
+	return objects
 }
 
 func (v *VillageScene) HeroDontColideAgainsTileset(hero *Hero, orientation string) bool {
@@ -52,13 +59,15 @@ func (v *VillageScene) HeroDontColideAgainsTileset(hero *Hero, orientation strin
 	//fmt.Printf("Current hero index is %v\n", heroTileIndex)
 	if orientation == "up" {
 		directUpperTileIndex := heroTileIndex - v.gameMap.Width
-		colisionObjectGroups := v.getCollisionObjectGroupByTileIndex(directUpperTileIndex)
-		if len(colisionObjectGroups) > 0 {
-			fmt.Println("collided")
+		directUpperTileRightAdjacentIndex := directUpperTileIndex+1
+		directUpperTileLeftAdjacentIndex := directUpperTileIndex-1
+		upperTiles := []int32{directUpperTileIndex, directUpperTileLeftAdjacentIndex, directUpperTileRightAdjacentIndex}
+		colisionObjects := v.getCollisionObjectGroupByTileIndexes(upperTiles)
+		if len(colisionObjects) > 0 {
+			// receiving objects
+			return false
 		}
-
 	}
-
 	// if the hero is is heading up we will check for the adjacent tiles in the upper row.
 	// if any of these tiles have collision box we will check for the collision
 	return true
