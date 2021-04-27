@@ -34,8 +34,8 @@ func (v VillageScene) getTileIDByIndex(index int32) []int32 {
 	return tileIDs
 }
 
-func (v VillageScene) getCollisionObjectGroupByTileIndexes(indexes []int32) []*Object {
-	var objects []*Object
+func (v VillageScene) getCollisionObjectGroupByTileIndexes(indexes []int32) []Object {
+	var objects []Object
 	for _, index := range indexes {
 		// get every tileid from every layer
 		tileIDs := v.getTileIDByIndex(index)
@@ -44,7 +44,10 @@ func (v VillageScene) getCollisionObjectGroupByTileIndexes(indexes []int32) []*O
 			if exists {
 				for _, objG := range objGls{
 					for _, obj := range objG.Objects{
-						objects = append(objects, obj)
+						valueObj := *obj
+						valueObj.MapX = float64(index % v.gameMap.Width * int32(v.gameMap.Tileset.TileWidth))
+						valueObj.MapY = float64(index / v.gameMap.Width * int32(v.gameMap.Tileset.TileHeight))
+						objects = append(objects, valueObj)
 					}
 				}
 			}
@@ -54,6 +57,8 @@ func (v VillageScene) getCollisionObjectGroupByTileIndexes(indexes []int32) []*O
 }
 
 func (v *VillageScene) HeroDontColideAgainsTileset(hero *Hero, orientation string) bool {
+	heroY := float64(hero.YPos + hero.SpriteHeight / 2) // we want the collision only in the feet
+	heroX := float64(hero.XPos)
 	// first we get the x,y coordinates, based on x,y we get the current tile index
 	heroTileIndex := v.getCurrentHeroTileIndex()
 	//fmt.Printf("Current hero index is %v\n", heroTileIndex)
@@ -61,11 +66,22 @@ func (v *VillageScene) HeroDontColideAgainsTileset(hero *Hero, orientation strin
 		directUpperTileIndex := heroTileIndex - v.gameMap.Width
 		directUpperTileRightAdjacentIndex := directUpperTileIndex+1
 		directUpperTileLeftAdjacentIndex := directUpperTileIndex-1
-		upperTiles := []int32{directUpperTileIndex, directUpperTileLeftAdjacentIndex, directUpperTileRightAdjacentIndex}
+		upperTiles := []int32{directUpperTileIndex, directUpperTileLeftAdjacentIndex, directUpperTileRightAdjacentIndex, heroTileIndex, heroTileIndex+v.gameMap.Width}
 		colisionObjects := v.getCollisionObjectGroupByTileIndexes(upperTiles)
 		if len(colisionObjects) > 0 {
-			// receiving objects
-			return false
+			for _, obj := range colisionObjects {
+				obX := obj.X + obj.MapX // gets the real X coordinate in map
+				obY := obj.Y + obj.MapY // gets the real X coordinate in map
+				obXEnd :=  obX + obj.Width
+				obYEnd :=  obY + obj.Height
+				// check if either left side or the right side of the box is inside hero.
+				if (obX >=  heroX && obX <= heroX + float64(hero.SpriteWidth)) || (obXEnd >= heroX && obXEnd <= heroX + float64(hero.SpriteWidth)){
+					// check if hero feet is inside the box
+					if heroY < obYEnd{
+						return false
+					}
+				}
+			}
 		}
 	}
 	// if the hero is is heading up we will check for the adjacent tiles in the upper row.

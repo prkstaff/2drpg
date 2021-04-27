@@ -77,9 +77,10 @@
  </tile>
  <tile id="686">
   <objectgroup draworder="index" id="2">
-   <object id="2" x="0.03125" y="0" width="11.875" height="14.9375"/>
-   <object id="4" x="11.9063" y="0.03125" width="2.09375" height="11.9063"/>
-   <object id="5" x="14.0625" y="0.09375" width="1.9375" height="6.90625"/>
+   <object id="2" x="0.03125" y="0" width="11.875" height="15.875"/>
+   <object id="4" x="11.9063" y="0.03125" width="1.34375" height="13.7813"/>
+   <object id="5" x="13.4531" y="0.04685" width="1.34375" height="13.7813"/>
+   <object id="6" x="14.8281" y="0.17185" width="1.34375" height="13.7813"/>
   </objectgroup>
  </tile>
 </tileset>

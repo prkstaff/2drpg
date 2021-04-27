@@ -63,6 +63,8 @@ type Object struct {
 	Width float64 `xml:"width,attr"`
 	// The height of the object (defaults to 0).
 	Height float64 `xml:"height,attr"`
+	MapX float64 // used to collision verification
+	MapY float64 // used to collision verification
 }
 
 // ObjectGroup is in fact a map layer, and is hence called "object layer" in Tiled Qt
