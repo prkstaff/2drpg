@@ -66,7 +66,9 @@ func (v *VillageScene) HeroDontColideAgainsTileset(hero *Hero, orientation strin
 		directUpperTileIndex := heroTileIndex - v.gameMap.Width
 		directUpperTileRightAdjacentIndex := directUpperTileIndex+1
 		directUpperTileLeftAdjacentIndex := directUpperTileIndex-1
-		upperTiles := []int32{directUpperTileIndex, directUpperTileLeftAdjacentIndex, directUpperTileRightAdjacentIndex, heroTileIndex, heroTileIndex+v.gameMap.Width}
+		upperTiles := []int32{directUpperTileIndex, directUpperTileLeftAdjacentIndex, directUpperTileRightAdjacentIndex,
+			heroTileIndex, heroTileIndex-1, heroTileIndex+1, heroTileIndex+v.gameMap.Width,
+			heroTileIndex+v.gameMap.Width-1, heroTileIndex+v.gameMap.Width+1}
 		colisionObjects := v.getCollisionObjectGroupByTileIndexes(upperTiles)
 		if len(colisionObjects) > 0 {
 			for _, obj := range colisionObjects {
@@ -74,9 +76,11 @@ func (v *VillageScene) HeroDontColideAgainsTileset(hero *Hero, orientation strin
 				obY := obj.Y + obj.MapY // gets the real X coordinate in map
 				obXEnd :=  obX + obj.Width
 				obYEnd :=  obY + obj.Height
-				// check if either left side or the right side of the box is inside hero.
-				if (obX >=  heroX && obX <= heroX + float64(hero.SpriteWidth)) || (obXEnd >= heroX && obXEnd <= heroX + float64(hero.SpriteWidth)){
+				//rect1.x < rect2.x + rect2.width && rect1.x + rect1.width > rect2.x
+				fmt.Printf("Hero X: %v, Y: %x\n", heroX, heroY)
+				if obX < (heroX + float64(hero.SpriteWidth)) && obXEnd > heroX {
 					// check if hero feet is inside the box
+					fmt.Println("Object X: %v, Y: %v\n", obX, obY)
 					if heroY < obYEnd{
 						return false
 					}
