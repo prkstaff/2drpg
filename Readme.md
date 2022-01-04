@@ -4,6 +4,6 @@ It features:
 - collision detection
 - character animations
 - character movimentation
-- Tile generation
+- Multi Level tile rederer
 
 ![game image](game_image.png "Game Image")
